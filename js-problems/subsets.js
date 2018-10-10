@@ -15,8 +15,7 @@ function subsets(number) {
     }
 
     for (let i = 0; i < Math.pow(2, number); i++){
-        var binary = parseInt(i, 10);
-        combinations.push(counterToSubset(binary.toString(2)));
+        combinations.push(counterToSubset(i.toString(2)));
     }
 
     return combinations;
