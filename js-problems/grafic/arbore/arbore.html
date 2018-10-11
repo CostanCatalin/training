@@ -1,0 +1,31 @@
+<html>
+
+<head>
+    <title>Arbore</title>
+    <style>
+        h1 {
+            text-align: center;
+            margin: 25px auto;
+        }
+        canvas {
+            display: block;
+            margin: 20px auto;
+            border: 2px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Arbore</h1>
+    <canvas id="arbore"></canvas>
+    <script src="arbore.js"></script>
+    <script>
+        let depth = 10,
+            length = 170,
+            lengthScale = 0.75,
+            angle = 35;
+        arbore(depth, length, lengthScale, angle);
+    </script>
+</body>
+
+</html>
