@@ -9,11 +9,11 @@ function numbersSetLength(n) {
 
     let remainder = n % 10**(number.length-1);
     result += (remainder+1) * number.length;
-    result += (firstDigit-1) * number.length  * 10**(number.length-1);    
+    result += (firstDigit-1) * number.length  * 10 ** (number.length-1);    
     
     let count = number.length - 1;
     while (count > 0) {
-        result += count * 9 * 10**(count-1); 
+        result += count * 9 * 10 ** (count-1); 
         count--;
     }
 

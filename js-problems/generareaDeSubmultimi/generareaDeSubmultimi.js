@@ -4,7 +4,7 @@ function subsets(number) {
     }
     let combinations = [];
 
-    function counterToSubset(string){
+    function counterToSubset(string) {
         let result = [];
         for (let i = 0; i < string.length; i++) {
             if (string[i] === '1') {
@@ -14,7 +14,7 @@ function subsets(number) {
         return result;
     }
 
-    for (let i = 0; i < Math.pow(2, number); i++){
+    for (let i = 0; i < Math.pow(2, number); i++) {
         combinations.push(counterToSubset(i.toString(2)));
     }
 
