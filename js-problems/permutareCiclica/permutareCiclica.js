@@ -3,15 +3,14 @@ function permutareCiclica(vect, p) {
         p = p % vect.length;
     }
 
-    for (let i = 0; i < p; i++) {
-
+    let result = [];
+    for (let i = p; i < vect.length; i++) {
+        result.push(vect[i]);
     }
 
-    return vect;
-}
+    for (let i = 0; i < p; i++) {
+        result.push(vect[i])
+    }
 
-// for (let i = 0; i < p; i++) {
-//     let aux = vect[vect.length-1];
-//     vect.splice(vect.length-1, 1);
-//     vect.splice(0, 0, aux);
-// }
+    return result;
+}
