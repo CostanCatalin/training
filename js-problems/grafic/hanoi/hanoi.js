@@ -56,7 +56,7 @@ var hanoi = (function hanoiWrapper() {
                 duration: 200
             });
             disk.style.left = rodsPositioning[rodIdx] + "px";
-            disk.style.bottom = currentStackHeight* diskHeight + "px";
+            disk.style.bottom = currentStackHeight * diskHeight + "px";
         }
     }
 
