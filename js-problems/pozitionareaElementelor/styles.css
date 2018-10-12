@@ -1,12 +1,22 @@
-.wrapper-static {
+.wrapper {
     display: inline-block;
+    vertical-align: top;
+    margin-right: 30px;
 }
 
-.wrapper-static .matrice {
+.wrapper .matrice {
     border: 2px solid #ccc;
     width: fit-content;
 
     margin: 20px;
+}
+
+.wrapper-absolut .matrice {
+    position: relative;
+}
+
+.wrapper-absolut .element {
+    position: absolute;
 }
 
 .row {

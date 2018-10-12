@@ -1,28 +1,39 @@
 const pozitionare = (function() {
-    let dest = document.querySelector(".wrapper-static");
+    let static = document.querySelector(".wrapper-static");
+    let absolut = document.querySelector(".wrapper-absolut");
 
     var TipuriEnum = {"pare":1, "diagPrincipala":2, "deasupraDiagPrincipala":3, "deasupraDiagSecundara": 4, "sah": 5};
     Object.freeze(TipuriEnum);
 
     function init() {
         var sheet = document.createElement('style');
-        sheet.innerHTML = ".element {width:" + latime + "px; height:" + inaltime + "px;"
-            + "margin-bottom:" + spatiuOrizontal + "px;margin-right:" + spatiuVertical + "px;"
-        + "}";
+        sheet.innerHTML = ".element {width:" + latime + "px; height:" + inaltime + "px; }" +
+        ".wrapper-static .element {margin-bottom:" + spatiuOrizontal + "px;margin-right:" + spatiuVertical + "px;}" +
+        ".wrapper-absolut .element {top:" + spatiuOrizontal + "px;left:" + spatiuVertical + "px;}";
         document.body.appendChild(sheet);
 
-        if (dest.childElementCount <= 1) {
-            MatriceStatica(TipuriEnum.pare);
-            MatriceStatica(TipuriEnum.diagPrincipala);
-            MatriceStatica(TipuriEnum.deasupraDiagPrincipala);
-            MatriceStatica(TipuriEnum.deasupraDiagSecundara);
-            MatriceStatica(TipuriEnum.sah);
+        if (static.childElementCount <= 1) {
+            Matrice(TipuriEnum.pare, true);
+            Matrice(TipuriEnum.diagPrincipala, true);
+            Matrice(TipuriEnum.deasupraDiagPrincipala, true);
+            Matrice(TipuriEnum.deasupraDiagSecundara, true);
+            Matrice(TipuriEnum.sah, true);
+        }
+
+        if (absolut.childElementCount <= 1) {
+            Matrice(TipuriEnum.pare, false);
+            Matrice(TipuriEnum.diagPrincipala, false);
+            Matrice(TipuriEnum.deasupraDiagPrincipala, false);
+            Matrice(TipuriEnum.deasupraDiagSecundara, false);
+            Matrice(TipuriEnum.sah, false);
         }
     }
 
-    function MatriceStatica(tip) {
-        let matriceaAsta = document.createElement("div");
-        matriceaAsta.classList.add("matrice");
+    function Matrice(tip, statica) {
+        let matrice = document.createElement("div");
+        matrice.classList.add("matrice");
+        matrice.style.minHeight = linii * inaltime + linii * spatiuOrizontal + "px";
+        matrice.style.minWidth = coloane * latime + coloane * spatiuVertical + "px";
 
         for (let i = 0; i < linii; i++) {
             let row = document.createElement("div");
@@ -31,6 +42,11 @@ const pozitionare = (function() {
             for (let j = 0; j < coloane; j++) {
                 let element = document.createElement("div");
                 element.classList.add("element");
+
+                if (!statica) {
+                    element.style.left = j * latime + j * spatiuVertical + "px";
+                    element.style.top = i * inaltime + i * spatiuOrizontal + "px";
+                }
                 
                 switch(tip) {
                     case TipuriEnum.pare:
@@ -62,10 +78,14 @@ const pozitionare = (function() {
 
                 row.append(element);
             }
-            matriceaAsta.append(row);
+            matrice.append(row);
         }
 
-        dest.append(matriceaAsta);
+        if (statica) {
+            static.append(matrice);
+        } else {
+            absolut.append(matrice);
+        }
     }
 
     return init;
