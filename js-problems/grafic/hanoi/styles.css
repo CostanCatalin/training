@@ -1,0 +1,36 @@
+h1 {
+    text-align: center;
+    margin: 25px auto;
+}
+
+#canvas {
+    display: block;
+    position: relative;
+    border: 2px solid #ccc;
+    max-width: 800px;
+    height: 700px;
+    width: 80%;
+    margin: 20px auto;
+}
+
+.section {
+    display: inline-block;
+    vertical-align: top;
+    width: 33%;
+    height: 100%;
+}
+
+.rod {
+    width: 5px;
+    height: 400px;
+    margin: 300px auto 0 auto;
+    background-color: burlywood;
+}
+
+.disk {
+    border: 2px solid #333;
+    background-color: white;
+    height: 35px;
+    border-radius: 25px;
+    position: absolute;
+}

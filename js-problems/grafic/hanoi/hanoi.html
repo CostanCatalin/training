@@ -2,25 +2,25 @@
 
 <head>
     <title>Turnurile din Hanoi</title>
-    <style>
-        h1 {
-            text-align: center;
-            margin: 25px auto;
-        }
-        canvas {
-            display: block;
-            margin: 20px auto;
-            border: 2px solid #ccc;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <h1>Hanoi</h1>
-    <canvas id="hanoi"></canvas>
+    <div id="canvas">
+        <div class="section section-1">
+            <div class="rod"></div>
+        </div>
+        <div class="section section-2">
+            <div class="rod"></div>
+        </div>
+        <div class="section section-3">
+            <div class="rod"></div>
+        </div>
+    </div>
     <script src="hanoi.js"></script>
     <script>
-        let disks = 7;
+        let disks = 3;
         hanoi(disks);
     </script>
 </body>
