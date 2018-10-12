@@ -3,7 +3,6 @@ var hanoi = (function hanoiWrapper() {
     const diskHeight = 35;
     const minDiskWidth = 50;
     const maxDiskWidth = 200;
-    const disksOnRod = [0, 0, 0];
     let rods;
 
     const rodsPositioning = [
@@ -30,7 +29,6 @@ var hanoi = (function hanoiWrapper() {
             newDisk.style.transform = "translateX(-50%)";
             newDisk.style.backgroundColor = "#" + Math.floor(Math.random()*16777214).toString(16);
             game.appendChild(newDisk);
-            disksOnRod[0]++;
         }
     }
 
