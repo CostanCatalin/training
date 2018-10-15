@@ -1,0 +1,112 @@
+body, html {
+    max-width: 100%;
+    margin: 0;
+    font-family: Verdana, sans-serif;
+}
+
+.wrapper {
+    width: 300px;
+    margin: 50px auto 0 auto;
+    position: relative;
+}
+
+.pulse {
+    position: relative;
+    z-index: 10;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0 auto;
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+}
+
+h2 {
+    text-align: center;
+    margin: 0 auto;
+    position: relative;
+    top: 40%;
+    z-index: 20;
+}
+
+.wrapper-css h2 {
+    color: white;
+}
+
+.wrapper-css .pulse {
+    background-color: #0170ba;
+    animation: change-size;
+    animation-delay: 350ms;
+    animation-iteration-count: infinite;
+}
+
+.wrapper-js .pulse {
+    background-color: #f5de19;
+}
+
+.wrapper-css:after,
+.helper {
+    left: 50%;
+    border-radius: 50%;
+    animation-name: pulse;
+    animation-iteration-count: infinite;
+    animation-duration: inherit;
+}
+
+.wrapper-css:after {
+    display: block;
+    content: '';
+    position: absolute;
+    background-color: #0170ba;
+    animation-delay: 200ms;
+    z-index: -2;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.helper {
+    position: absolute;
+    animation-delay: 350ms;
+    top: 50%;
+    z-index: 25;
+    transform: translate(-50%, -50%);
+}
+
+.wrapper-css .helper{
+    background-color: #0142ba;
+}
+.wrapper-js .helper {
+    background-color: #ddc917;
+}
+
+.wrapper-js .outer-pulse {
+    background-color: #ddc917;
+    position: absolute;
+    z-index: -2;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes pulse {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: .65;
+    }
+    100% {
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+    }
+}
+
+@keyframes change-size {
+    0% {
+        box-shadow: 0 0 0 0 rgba(1, 66, 186, 0.5);
+    }
+    100% {
+        box-shadow: 0 0 0 50px rgba(1, 66, 186, 0);
+    }
+}
