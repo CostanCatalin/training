@@ -16,9 +16,16 @@ var elementPulsatoriu = (function elementPulsatoriu() {
         jsVersion();
     }
 
+    function setSizeBoundries(elem) {
+        elem.style.minWidth = dimensiuneMinima + "px";
+        elem.style.minHeight = dimensiuneMinima + "px";
+        
+        elem.style.maxWidth = dimensiuneMaxima + "px";
+        elem.style.maxHeight = dimensiuneMaxima + "px";
+    }
+
     function cssVersion() {
-        destCss.style.width = dimensiuneMinima + "px";
-        destCss.style.height = dimensiuneMinima + "px";
+        setSizeBoundries(destCss);
         destCss.style.animationDuration = durata + "ms";
 
         wrappers[0].style.animationDuration = durata + "ms";
@@ -28,8 +35,7 @@ var elementPulsatoriu = (function elementPulsatoriu() {
 
     function jsVersion() {
         start = null;
-        destJs.style.width = dimensiuneMinima + "px";
-        destJs.style.height = dimensiuneMinima + "px";
+        setSizeBoundries(destJs);
         jsHelper.style.opacity = 1;
 
         jsHelper.style.width = 0;
@@ -51,12 +57,17 @@ var elementPulsatoriu = (function elementPulsatoriu() {
             start = timestamp;
         }
 
-        var progress = Math.floor(timestamp - start);
-        var sizeInner = Math.min(progress / (durata - 350) * dimensiuneMinima, dimensiuneMinima);
-        var sizeOuter = Math.min(progress / (durata - 350) * dimensiuneMaxima, dimensiuneMaxima);
+        var progress = (timestamp - start) / (durata - 350);
+        var sizeInner = Math.min(progress * dimensiuneMinima, dimensiuneMinima);
+        var sizeOuter = Math.min(progress * dimensiuneMaxima, dimensiuneMaxima);
+        var size = Math.min(Math.abs(Math.sin(progress * 10 / Math.PI)) * dimensiuneMaxima, dimensiuneMaxima);
+        
         jsHelper.style.opacity = Math.min((dimensiuneMinima - sizeInner) / dimensiuneMinima, 1);
         jsHelper.style.width = sizeInner + "px"; 
         jsHelper.style.height = sizeInner + "px";
+        
+        destJs.style.height = size + "px";
+        destJs.style.width = size + "px";
 
         outerPulseJs.style.opacity = jsHelper.style.opacity;
         outerPulseJs.style.width = sizeOuter + "px"; 

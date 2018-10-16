@@ -1,6 +1,8 @@
 .playground {
-    width: 100%;
-    margin: 0;
+    width: 350px;
+    height: 350px;
+    margin: 250px auto 0 auto;
+    border: 1px solid #ccc;
 }
 
 .dot {
@@ -13,6 +15,9 @@
     transition: top .4s, left .4s;
 }
 
-.dot.active {
-    background-color: #aa0000;
-} 
+.moved {
+    background-color: red;
+    -webkit-box-shadow: 10px 10px 21px -8px rgba(0,0,0,0.75);
+    -moz-box-shadow: 10px 10px 21px -8px rgba(0,0,0,0.75);
+    box-shadow: 10px 10px 21px -8px rgba(0,0,0,0.75);
+}
