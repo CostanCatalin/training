@@ -2,6 +2,7 @@ var avoidTheMouse = (function mouse() {
     document.body.onmousemove = handleMouseMove;
     
     let moved = [];
+    let dots = [];
     let pointerX;
     let pointerY;
 
@@ -29,6 +30,11 @@ var avoidTheMouse = (function mouse() {
                 elem.setAttribute('x', currentX);
                 elem.setAttribute('y', currentY);
                 dest.append(elem);
+                dots.push({
+                    x: currentX,
+                    y: currentY,
+                    element: elem
+                });
             }
         }
     }
@@ -54,25 +60,18 @@ var avoidTheMouse = (function mouse() {
         }
     }
 
-    function moveAround(timestamp) {
-        let sectionSize = distance / 15;
+    function moveAround() {
         checkPrevious();
 
-        for (let x = pointerX - distance; x < pointerX + distance; x += sectionSize) {
-            for (let y = pointerY - distance; y < pointerY + distance; y += sectionSize) {
-                             
-                let element = document.elementFromPoint(x, y);
-
-                if (element && element.classList.contains('dot') 
-                && Math.sqrt((x - pointerX)**2 + (y - pointerY)**2) < distance) {
-                    let angle = Math.atan2(pointerY - y, pointerX - x);
+        for (let i = 0; i < dots.length; i++) {
+            if (Math.sqrt((dots[i].x - pointerX)**2 + (dots[i].y - pointerY)**2) < distance) {
+                let angle = Math.atan2(pointerY - dots[i].y, pointerX - dots[i].x);
                     
-                    element.style.left = pointerX - Math.cos(angle) * (distance + 100) + "px";
-                    element.style.top = pointerY - Math.sin(angle) * (distance + 100) + "px";
-                    element.classList.add('moved');
+                dots[i].element.style.left = pointerX - Math.cos(angle) * (distance + 100) + "px";
+                dots[i].element.style.top = pointerY - Math.sin(angle) * (distance + 100) + "px";
+                dots[i].element.classList.add('moved');
 
-                    moved.push(element);
-                }
+                moved.push(dots[i].element);
             }
         }
     }
