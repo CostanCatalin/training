@@ -6,6 +6,7 @@ var coliziune = (function coliziune(){
     let square1 = document.querySelector('.wrapper-squares .square-1');
     let square2 = document.querySelector('.wrapper-squares .square-2');
     let startC = window.innerHeight / 2;
+    const bordersWidth = 2;
 
     function init() {
         positionAndEvents(circle1, 0, true);
@@ -77,15 +78,27 @@ var coliziune = (function coliziune(){
     }
 
     function squaresOverlapping() {
-        let rect1 = square1.getBoundingClientRect(); 
-        let rect2 = square2.getBoundingClientRect();
-        let tooClose = Math.sqrt(Math.pow(rect1.left - rect2.left, 2) + Math.pow(rect1.top - rect2.top, 2)) < size;
+        let rect1 = { 
+            Tx: Math.floor(square1.style.top.replace('px', '')),
+            Ty: Math.floor(square1.style.left.replace('px', '')),
+            Bx: Math.floor(square1.style.top.replace('px', '')) + size + bordersWidth,
+            By: Math.floor(square1.style.left.replace('px', '')) + size + bordersWidth
+        };
+        let rect2 = { 
+            Tx: Math.floor(square2.style.top.replace('px', '')),
+            Ty: Math.floor(square2.style.left.replace('px', '')),
+            Bx: Math.floor(square2.style.top.replace('px', '')) + size + bordersWidth,
+            By: Math.floor(square2.style.left.replace('px', '')) + size + bordersWidth
+        };
+        let outsideOfEachOther = false;
+        
+        // checking if they're outside of eachother [on the left or on top]
+        if (rect1.Bx < rect2.Tx || rect2.Bx < rect1.Tx 
+            || rect1.Ty > rect2.By || rect2.Ty > rect1.By) {
+            outsideOfEachOther = true;
+        }
 
-        if ( tooClose
-            
-         
-         
-        ) {
+        if (!outsideOfEachOther){
             square1.classList.add('active');
         } else {
             square1.classList.remove('active');
