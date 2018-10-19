@@ -56,7 +56,7 @@
         let currentTime = new Date();
         currentAngles[0] = currentTime.getSeconds() * angleBetweenMinutes;
         currentAngles[1] = currentTime.getMinutes() * angleBetweenMinutes;
-        currentAngles[2] = currentTime.getHours() * angleBetweenHours;
+        currentAngles[2] = currentTime.getHours() * angleBetweenHours + ((angleBetweenHours / 60) % 360 * currentTime.getMinutes());
     }
 
     function moveHands(hands, currentAngles) {
@@ -64,7 +64,7 @@
 
         if (currentAngles[0] <= 5) {
             currentAngles[1] = (currentAngles[1] + angleBetweenMinutes) % 360;
-            currentAngles[2] += 0.1;
+            currentAngles[2] += (angleBetweenHours / 60) % 360;
         }
 
         for (let i = 0; i < hands.length; i++) {
