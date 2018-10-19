@@ -8,12 +8,16 @@
 
     function init() {
         matrix1.style.width = columns * elementSize - 3 + "px";
+        matrix1.style.height = lines * elementSize - 3 + "px";
+
         matrix2.style.width = columns * elementSize - 3 + "px";
+        matrix2.style.height = lines * elementSize - 3 + "px";
 
         for (let line = 0; line < lines; line++) {
             elementsM2[line] = []
             for (let column = 0; column < columns; column++) {
                 elementsM2[line][column] = false;
+
                 matrix1.appendChild(createElement(line, column, true));
                 matrix2.appendChild(createElement(line, column, false));
             }
@@ -27,7 +31,7 @@
                 return;
             }
             let coord = selectedElement.querySelector('span').innerText.split('');
-            selectedElement.classList.add('hide');
+            selectedElement.classList.add('transparent');
 
             let copy = createElement(coord[0], coord[1], true);
             copy.classList.add('moving');
@@ -57,7 +61,7 @@
                 wrapper.querySelector('.moving').remove();
                 let coord = currentSelectedItem.querySelector('span').innerText.split('');
 
-                matrix1.querySelector('.element-' + coord[0] + '-' + coord[1]).classList.remove('hide');
+                matrix1.querySelector('.element-' + coord[0] + '-' + coord[1]).classList.remove('transparent');
                 currentSelectedItem = null;
                 return;
             }
@@ -70,15 +74,18 @@
                 if (moving) {
                     wrapper.querySelector('.moving').remove();
                 }
-                matrix1.querySelector('.hide').classList.remove('hide');
+                matrix1.querySelector('.transparent').classList.remove('transparent');
                 return;
             }
 
             let result = currentSelectedItem.cloneNode(1);
             result.classList.remove('moving');
+            result.style.left = column * elementSize + "px"; 
+            result.style.top = line * elementSize + "px";
             document.querySelector('.placeholder-' + line + '-' + column).replaceWith(result);
             
             wrapper.querySelector('.moving').remove();
+            matrix1.querySelector('.transparent').remove();
             elementsM2[line][column] = true;
             currentSelectedItem = null;
         });
@@ -94,7 +101,11 @@
             }
 
             let coord = selectedElement.querySelector('span').innerText.split('');
-            matrix1.querySelector('.element-' + coord[0] + '-' + coord[1]).classList.remove('hide');
+            let result = selectedElement.cloneNode(1);
+            result.style.left = coord[1] * elementSize + "px";
+            result.style.top = coord[0] * elementSize + "px";
+            matrix1.appendChild(result);
+
             selectedElement.replaceWith(createElement(line, column, false));
             elementsM2[line][column] = false;
         });
@@ -112,6 +123,9 @@
             number.innerText = line + '' + column;
             element.append(number);
         }
+
+        element.style.left = column * elementSize + "px";
+        element.style.top = line * elementSize + "px";
         
         return element;
     }

@@ -6,9 +6,10 @@ body {
 }
 
 .matrix {
+    position: relative;
+    margin-top: 100px;
     display: inline-block;
     vertical-align: top;
-    margin-top: 100px;
     max-width: 45%;
     background-color: #333;
 } 
@@ -21,21 +22,10 @@ body {
 .placeholder {
     width: 50px;
     height: 50px;
-    display: inline-block;
+    position: absolute;
     vertical-align: top;
-    margin-left: 3px;
     text-align: left;
     border: 1px solid black;
-}
-
-.placeholder:nth-of-type(n+6),
-.element:nth-of-type(n+6) {
-    margin-top: 3px;
-}
-
-.placeholder:nth-of-type(5n-4),
-.element:nth-of-type(5n-4) {
-    margin-left: 0;
 }
 
 
@@ -63,7 +53,7 @@ body {
     position: absolute;
 }
 
-.hide {
-    opacity: 0;
+.transparent {
+    opacity: 0.35;
     cursor: initial;
 }
