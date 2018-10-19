@@ -1,0 +1,54 @@
+body,
+html {
+    margin: 0;
+    font-family: Verdana, sans-serif;
+    font-size: medium;
+}
+
+.slider { 
+    margin: 350px auto 0 auto;
+    height: 40px;
+    width: 500px;
+    position: relative;
+    border: 2px solid black;
+}
+
+.slider p {
+    position: absolute;
+    margin: 0;
+}
+
+.min-value {
+    left: -50px;
+}
+
+.max-value {
+    right: -50px;
+}
+
+.current-value {
+    left: 50%;
+    bottom: -35px;
+}
+
+.bar {
+    height: 3px;
+    width: 100%;
+    cursor: pointer;
+    background-color: #555;
+    position: absolute;
+}
+
+.button {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #eee;
+    border: 1px solid black;
+    position: absolute;
+}
+
+.vertical-center {
+    top: 50%;
+    transform: translateY(-50%);
+}
