@@ -24,14 +24,12 @@
         }
 
         matrix1.addEventListener('mousedown', function mouseClickedOnMatrix1(e){
-            let selectedElement = document.elementFromPoint(e.pageX, e.pageY);
-
-            if (!selectedElement.classList.contains('element') || selectedElement.classList.contains('hide')) {
+            if (!e.target.classList.contains('element') || e.target.classList.contains('hide')) {
                 currentSelectedItem = null;
                 return;
             }
-            let coord = selectedElement.querySelector('span').innerText.split('');
-            selectedElement.classList.add('transparent');
+            let coord = e.target.querySelector('span').innerText.split('');
+            e.target.classList.add('transparent');
 
             let copy = createElement(coord[0], coord[1], true);
             copy.classList.add('moving');
@@ -91,22 +89,21 @@
         });
 
         matrix2.addEventListener('mousedown', function mouseClickedOnMatrix2(e){
-            let selectedElement = document.elementFromPoint(e.pageX, e.pageY);
+            if (!e.target.classList.contains('element')) {
+                return;
+            }
+
             let rect = matrix2.getBoundingClientRect();
             let line = Math.ceil((e.pageY - rect.top) / elementSize) - 1;
             let column = Math.ceil((e.pageX - rect.left) / elementSize) - 1;
 
-            if (!selectedElement.classList.contains('element')) {
-                return;
-            }
-
-            let coord = selectedElement.querySelector('span').innerText.split('');
-            let result = selectedElement.cloneNode(1);
+            let coord = e.target.querySelector('span').innerText.split('');
+            let result = e.target.cloneNode(1);
             result.style.left = coord[1] * elementSize + "px";
             result.style.top = coord[0] * elementSize + "px";
             matrix1.appendChild(result);
 
-            selectedElement.replaceWith(createElement(line, column, false));
+            e.target.replaceWith(createElement(line, column, false));
             elementsM2[line][column] = false;
         });
     }
