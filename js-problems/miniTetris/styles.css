@@ -1,20 +1,113 @@
 html,
 body {
     margin: 0;
+    font-family: Verdana, sans-serif;
+    font-size: medium;
+}
+
+.wrapper {
+    position: relative;
+    max-width: 500px;
+    height: 500px;
+    margin: 100px auto 0 auto;
+    background-color: black;
 }
 
 .panel {
     width: 300px;
+    position: absolute;
+    right: -330px;
+    border: 2px solid #ccc;
+    padding-left: 15px;
+    top: -2px;
+}
+
+.game {
+    position: relative;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border: 1px solid white;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.square {
+    background-color: white;
+    border: 1px solid black;
+    position: absolute;
+    width: 14px;
+    height: 14px; 
 }
 
 label, 
 input[type="number"] {
     display: block;
     margin: 5px auto;
+    padding: 5px 10px;
 }
 
 input[type="button"]{
     width: 125px;
     margin: 5px  12.5px;
     cursor: pointer;
+    padding: 10px;
+    border: none;
+    user-select: none;
+    outline: none;
+    border-radius: 2px;
+    transition: 0.3s background-color;
+}
+
+input[type="button"]:hover{
+    background-color: #ccc;
+}
+
+.object {
+    position: absolute;
+}
+
+/* square */
+.object-1 .square-1 {
+    left: 15px;
+    top: -15px;
+}
+
+.object-1 .square-2 {
+    top: -15px;
+}
+
+.object-1 .square-3 {
+    left: 15px;
+}
+
+/* Bar */
+.object-2 .square-1 {
+    top: -15px;
+}
+
+.object-2 .square-2 {
+    top: -30px;
+}
+
+.object-2 .square-3 {
+    top: -45px;
+}
+
+/* Z shaped */
+.object-3 .square-0 {
+    top: -15px;
+}
+
+.object-3 .square-1 {
+    top: -30px;
+}
+
+.object-3 .square-2 {
+    left: 15px;
+    top: -15px;
+}
+
+.object-3 .square-3 {
+    left: 15px;
 }

@@ -5,24 +5,24 @@
 </head>
 
 <body>
-    <div class="game">
+    <div class="wrapper">
+        <div class="game">
 
+        </div>
+
+        <div class="panel">
+            <p><span class="completed"></span> line(s) completed</p>
+            <label>Lines</label>
+            <input type="number" min="2" name="lines"/>
+            
+            <label>Columns</label>
+            <input type="number" min="4" name="columns"/>
+            <label>Speed (squares/sec)</label>
+            <input type="number" min="1" name="speed"/>
+
+            <input type="button" id="pause" value="Pause"><input type="button" id="reset" value="Reset">
+        </div>
     </div>
-    <div class="panel">
-        <p>Lines completed: <span class="completed"></span></p>
-        <label>Lines</label>
-        <input type="number" min="2" name="lines"/>
-        
-        <label>Columns</label>
-        <input type="number" min="4" name="columns"/>
-        <label>Speed (squares/sec)</label>
-        <input type="number" min="1" name="speed"/>
-
-        <input type="button" id="pause" value="Pause"><input type="button" id="reset" value="Reset">
-    </div>
-
     <script src="miniTetris.js"></script>
-
 </body>
-
 </html>
