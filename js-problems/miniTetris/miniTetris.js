@@ -151,6 +151,58 @@
     }
 
     function gameFunction() {
+        function placeObjectIntoMatrix() {
+            if (currentObj.y == 0 || matrix[currentObj.y][currentObj.x] != 0) {
+                return false;
+            }
+            matrix[currentObj.y][currentObj.x] = 1;
+            return true;
+        }
+    
+        function checkLine() {
+            function matrixShift(line) {
+                let newLine = matrix[line].map(x => 0);
+                matrix.splice(line, 1);
+                matrix.unshift(newLine);
+            }
+    
+            for(let i = lines - 1; i >= 0; i--) {
+                let lineFound = true;
+                for (let j = 0; j < columns; j++) {
+                    if (matrix[i][j] == 0) {
+                        lineFound = false;
+                    }
+                }
+    
+                if (lineFound) {
+                    completed++;
+                    document.querySelector(".completed").innerText = completed;
+                    matrixShift(i);
+                    
+                    for (let i = 0; i < game.children.length; i++) {
+                        let current = game.children[i];
+    
+                        if (parseInt(current.style.top.replace('px', '')) == (lines - 1) * squareSize) {
+                            current.remove();
+                            i--;
+                        } else {
+                            current.style.top = parseInt(current.style.top.replace('px', '')) + squareSize + "px";
+                        }
+                    }
+                }
+            }
+        }
+    
+        function gameOver() {
+            let response = confirm(completed + " lines is ok, I guess. Can you do better?");
+            if (response == true) {
+                wasReset = true;
+                completed = 0;
+                init();
+                setTimeout(gameFunction, 1000/ getSpeed());
+            }
+        }
+
         if (paused) {
             return;
         }
@@ -184,58 +236,6 @@
         }
 
         return currentColLastItem - 1;
-    }
-
-    function placeObjectIntoMatrix() {
-        if (currentObj.y == 0 || matrix[currentObj.y][currentObj.x] != 0) {
-            return false;
-        }
-        matrix[currentObj.y][currentObj.x] = 1;
-        return true;
-    }
-
-    function checkLine() {
-        function matrixShift(line) {
-            let newLine = matrix[line].map(x => 0);
-            matrix.splice(line, 1);
-            matrix.unshift(newLine);
-        }
-
-        for(let i = lines - 1; i >= 0; i--) {
-            let lineFound = true;
-            for (let j = 0; j < columns; j++) {
-                if (matrix[i][j] == 0) {
-                    lineFound = false;
-                }
-            }
-
-            if (lineFound) {
-                completed++;
-                document.querySelector(".completed").innerText = completed;
-                matrixShift(i);
-                
-                for (let i = 0; i < game.children.length; i++) {
-                    let current = game.children[i];
-
-                    if (parseInt(current.style.top.replace('px', '')) == lines * squareSize) {
-                        current.remove();
-                        i--;
-                    } else {
-                        current.style.top = parseInt(current.style.top.replace('px', '')) + squareSize + "px";
-                    }
-                }
-            }
-        }
-    }
-
-    function gameOver() {
-        let response = confirm(completed + " lines is ok, I guess. Can you do better?");
-        if (response == true) {
-            wasReset = true;
-            completed = 0;
-            init();
-            setTimeout(gameFunction, 1000/ getSpeed());
-        }
     }
 
     function getSpeed() {

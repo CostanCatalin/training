@@ -1,3 +1,5 @@
+var lines = 5;
+var columns = 5;
 (function pickAndPlace() {
     let matrix1 = document.querySelector('.matrix-1');
     let matrix2 = document.querySelector('.matrix-2');
@@ -24,11 +26,12 @@
         }
 
         matrix1.addEventListener('mousedown', function mouseClickedOnMatrix1(e){
+            //console.log(e.target);
             if (!e.target.classList.contains('element') || e.target.classList.contains('hide')) {
                 currentSelectedItem = null;
                 return;
             }
-            let coord = e.target.querySelector('span').innerText.split('');
+           let coord = e.target.querySelector('span').innerText.split('');
             e.target.classList.add('transparent');
 
             let copy = createElement(coord[0], coord[1], true);
@@ -94,8 +97,8 @@
             }
 
             let rect = matrix2.getBoundingClientRect();
-            let line = Math.ceil((e.pageY - rect.top) / elementSize) - 1;
-            let column = Math.ceil((e.pageX - rect.left) / elementSize) - 1;
+            let line = Math.floor((e.pageY - rect.top) / elementSize);
+            let column = Math.floor((e.pageX - rect.left) / elementSize);
 
             let coord = e.target.querySelector('span').innerText.split('');
             let result = e.target.cloneNode(1);

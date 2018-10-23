@@ -5,12 +5,18 @@ html {
     font-size: medium;
 }
 
+h1{
+    text-align: center;
+}
+
 .slider { 
     margin: 350px auto 0 auto;
     height: 40px;
+    max-width: 80%;
     width: 500px;
     position: relative;
     border: 2px solid black;
+    cursor: pointer;
 }
 
 .slider p {
@@ -19,11 +25,11 @@ html {
 }
 
 .min-value {
-    left: -50px;
+    left: -40px;
 }
 
 .max-value {
-    right: -50px;
+    right: -35px;
 }
 
 .current-value {
@@ -34,7 +40,6 @@ html {
 .bar {
     height: 3px;
     width: 100%;
-    cursor: pointer;
     background-color: #555;
     position: absolute;
 }

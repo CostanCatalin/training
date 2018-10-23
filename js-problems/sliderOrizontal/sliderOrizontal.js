@@ -1,4 +1,7 @@
 (function slider() {
+    var Min = -400;
+    let currentValue = Min;
+    var Max = 540;
     let currentValueDisplay = document.querySelector('.current-value'); 
     let button = document.querySelector('.button');
     let slider = document.querySelector('.slider');
@@ -13,23 +16,38 @@
         document.querySelector('.max-value').innerText = Max;
         currentValueDisplay.innerText = Min;
 
-        button.addEventListener('mousedown', function(e) {
-            clicked = true;
-        });
+        slider.addEventListener('mousedown', mouseDownListener);   
+        window.addEventListener('resize', windowResizedListener);   
+        // slider.addEventListener('mousedown', function(e) {
+        // });
+    }
 
-        slider.addEventListener('mouseup', function(e) {
-            clicked = false;
-        });
+    function mouseDownListener(e) {
+        clicked = true;
+        document.body.addEventListener('mouseup', mouseUpListener);
+        document.body.addEventListener('mousemove', mouseMoveListener);
+        currentValueFromPointer(e.pageX);
+    }
 
-        slider.addEventListener('mousemove', function(e) {
-            if (clicked) {
-                currentValueFromPointer(e.pageX);
-            }
-        });
+    function mouseUpListener(e) {
+        clicked = false;
+        document.body.removeEventListener('mouseup', mouseUpListener);
+        document.body.removeEventListener('mousemove', mouseMoveListener);
+    }
 
-        bar.addEventListener('click', function(e) {
+    function mouseMoveListener(e) {
+        if (clicked) {
             currentValueFromPointer(e.pageX);
-        });
+        }
+    }
+
+    function windowResizedListener(e) {
+        barRect = bar.getBoundingClientRect();
+        barWidth = barRect.right - barRect.left - button.offsetWidth;
+
+        let percent = (currentValue - Min) / (Max - Min);
+
+        button.style.left =  barWidth * percent + "px";
     }
 
     function currentValueFromPointer(pointerX) {
@@ -45,7 +63,7 @@
 
         button.style.left = clickOffsetX + "px";
 
-        let currentValue = Min + Math.round(clickOffsetX / barWidth * (Max - Min));
+        currentValue = Min + Math.round(clickOffsetX / barWidth * (Max - Min));
         currentValueDisplay.innerText = currentValue;
     }
 
