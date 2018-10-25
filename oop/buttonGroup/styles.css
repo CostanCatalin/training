@@ -1,0 +1,40 @@
+body,
+html {
+    margin: 0;
+    font-family: Verdana, sans-serif;
+}
+
+.group {
+    display: block;
+    width: 80%;
+    margin: 50px auto;
+    background-color: #eee;
+    min-height: 10px;
+}
+
+.group--disabled .group__button {
+    cursor: not-allowed !important;
+    background-color: #ccc !important;
+    color: #aaa;
+}
+
+.group__button {
+    user-select: none;
+    border-radius: 2px;
+    padding: 5px 10px;
+    width: 200px;
+    text-align: center;
+    margin: 5px 10px;
+    cursor: pointer;
+    display: block;
+}
+
+.group__button--disabled {
+    cursor: not-allowed !important;
+    background-color: #ccc !important;
+    color: #aaa;
+}
+
+.group__button--selected {
+    background-color: orange !important;
+}
