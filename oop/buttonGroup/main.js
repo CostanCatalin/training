@@ -12,16 +12,23 @@ let objects = [];
 
             for (let buttonIdx = 0; buttonIdx < element.buttons.length; buttonIdx++) {
                 let button = element.buttons[buttonIdx];
-                let btnObj = new Button(button.name, !button.disabled, button.selected, button.customStyle);
+                let btnObj = new Button(button.name, !button.disabled, button.selected, element.customStyle, button.customStyle);
                 groupObj.addButton(btnObj);
 
-                group.append(btnObj.createEquivElement(groupObj.customStyle));
+                group.append(btnObj.displayElement(groupObj.customStyle));
             };
+
+            groupObj.addListener("message", function(e) {
+                groupObj.setSelected.call(groupObj, parseInt(e.data));
+            });
 
             dest.append(group);
             objects.push(groupObj);
         };
+
+
     }
+
 
     init();
 })();

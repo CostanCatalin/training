@@ -2,7 +2,7 @@ let config = (function getConfig() {
     return {
         groups: [
             {
-                type: 'checkbox',
+                type: 'radio',
                 disabled: false,
                 customStyle: 'display: inline-block; background-color: green;',
                 buttons: [
@@ -27,7 +27,7 @@ let config = (function getConfig() {
             {
                 type: 'button',
                 disabled: false,
-                customStyle: 'background-color: blue; width: 100px',
+                customStyle: 'background-color: blue; width: 100px;',
                 buttons: [
                     {
                         name: 'Button 4',

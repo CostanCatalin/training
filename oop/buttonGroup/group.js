@@ -1,10 +1,9 @@
 let Group = (function groupModule() {
 
     function Group(type, active = true, selected = false, customStyle='') {
-        if (!this instanceof Button) {
-            return new Button();
+        if (!this instanceof Group) {
+            return new Group();
         }
-
         this.buttons = [];
         this.type = type;
         this.active = active;
@@ -12,87 +11,85 @@ let Group = (function groupModule() {
         this.customStyle = customStyle;
     }
 
-    Group.prototype.setState = function(selected) {
-        if (this.active) {
-            this.selected = selected;
-        }
-    }
+    Group.prototype = new CustomEventTarget();
 
-    Group.prototype.addButton = function(button) {
-        if (button instanceof Button) {
-            this.buttons.push(button);
-        }
-    }
-
-    Group.prototype.getSelected = function() {
-        let res = [];
-
-        this.buttons.forEach(function(element) {
-            if (element.selected) {
-                res.push(element);
+    Object.assign(Group.prototype, {
+        setState: function(selected) {
+            if (this.active) {
+                this.selected = selected;
             }
-        })
+        },
 
-        return res;
-    }
-
-    Group.prototype.getNotSelected = function() {
-        let res = [];
-
-        this.buttons.forEach(function(element) {
-            if (!element.selected) {
-                res.push(element);
+        addButton: function(button) {
+            if (button instanceof Button) {
+                this.buttons.push(button);
             }
-        })
+        },
 
-        return res;
-    }
-
-    Group.prototype.setSelected = function(buttonId, selected) {
-        let success = false;
-
-        this.buttons.forEach(function(element) {
-            if (element.id == buttonId) {
-                let dest =  document.querySelector('.group__button[related-object-id="' + buttonId + '"]');
-                element.selected = !element.selected;
-                
-                if (selected === undefined) {
-                    dest.classList.toggle('group__button--selected');
-                } else if (selected === true) {
-                    dest.classList.add('group__button--selected');
-                } else {
-                    dest.classList.remove('group__button--selected');
-                }
-               
-                success = true;
-            }
-        });
-
-        if (success && this.type == 'checkbox') {
+        getSelected: function() {
+            let res = [];
+    
             this.buttons.forEach(function(element) {
-                if (element.id != buttonId) {
-                    element.selected = false;
-                    let dest =  document.querySelector('.group__button[related-object-id="' + element.id + '"]');
-                    dest.classList.remove('group__button--selected');
+                if (element.selected) {
+                    res.push(element);
                 }
-            });
+            })
+    
+            return res;
+        },
+
+        getNotSelected: function() {
+            let res = [];
+    
+            this.buttons.forEach(function(element) {
+                if (!element.selected) {
+                    res.push(element);
+                }
+            })
+    
+            return res;
+        },
+
+        getById: function(buttonId) {
+            let button = this.buttons.find(elem => elem.id == buttonId);
+            return button;
+        },
+
+        setSelected: function(buttonId, selected) {
+
+            element = this.getById(buttonId);
+            if (!element) {
+                return false;
+            }
+
+            element.selected = !element.selected;
+            
+            document.querySelector('.group__button[related-object-id="' + element.id + '"]').replaceWith(element.displayElement());
+    
+            if (this.type == 'radio') {
+                this.buttons.forEach(function(element) {
+                    if (element.id != buttonId) {
+                        element.selected = false;
+                        let dest =  document.querySelector('.group__button[related-object-id="' + element.id + '"]');
+                        dest.classList.remove('group__button--selected');
+                    }
+                });
+            }
+        },
+
+        createEquivElement: function(id) {
+            let group = document.createElement('div');
+            group.classList.add("group", "group-" + id);
+    
+            if (this.disabled == true) {
+                group.classList.add("group--disabled");
+            } else if (this.type == 'radio') {
+                group.classList.add("group--radio");
+            }
+    
+            return group;
         }
-
-        return success;
-    }
-
-    Group.prototype.createEquivElement = function(id) {
-        let group = document.createElement('div');
-        group.classList.add("group", "group-" + id);
-
-        if (this.disabled == true) {
-            group.classList.add("group--disabled");
-        } else if (this.type == 'checkbox') {
-            group.classList.add("group--checkbox");
-        }
-
-        return group;
-    }
+    });
 
 
     return Group;
