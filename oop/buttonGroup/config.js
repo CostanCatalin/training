@@ -1,52 +1,17 @@
-let config = (function getConfig() {
-    return {
-        groups: [
-            {
-                type: 'radio',
-                disabled: false,
-                customStyle: 'display: inline-block; background-color: green;',
-                buttons: [
-                    {
-                        name: 'Button 1',
-                        selected: false,
-                        disabled: false,
-                        customStyle: null
-                    },{
-                        name: 'Button 2',
-                        selected: false,
-                        disabled: false,
-                        customStyle: null
-                    },{
-                        name: 'Button 3',
-                        selected: false,
-                        disabled: false,
-                        customStyle: 'border: 2px solid red;'
-                    }
-                ]
-            },
-            {
-                type: 'button',
-                disabled: false,
-                customStyle: 'background-color: blue; width: 100px;',
-                buttons: [
-                    {
-                        name: 'Button 4',
-                        selected: true,
-                        disabled: false,
-                        customStyle: null
-                    },{
-                        name: 'Button 5',
-                        selected: false,
-                        disabled: false,
-                        customStyle: null
-                    },{
-                        name: 'Button 6',
-                        selected: false,
-                        disabled: true,
-                        customStyle: '',
-                    }
-                ]
-            }
-        ]
-    };
+let groups = (function getConfig() {
+    
+    let group1 = new Group('radio', 0, true, false, 'display: inline-block; background-color: green;');
+    group1.addButton(new Button('Button 1', true, false, null));
+    group1.addButton(new Button('Button 2', true, false, null));
+    group1.addButton(new Button('Button 3', true, false, 'border: 2px solid red;'));
+
+    let group2 = new Group('button', 1, true, false, 'background-color: blue; width: 100px;');
+    group2.addButton(new Button('Button 4', true, false, null));
+    group2.addButton(new Button('Button 5', true, false, ''));
+    group2.addButton(new Button('Button 6', false, true, null));
+
+    return  [
+        group1,
+        group2
+    ];
 })();

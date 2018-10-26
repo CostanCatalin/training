@@ -1,11 +1,11 @@
 let CustomEventTarget = (function setEvents() {
     let _listeners = [];
 
-    function EventTarget(){
+    function CustomEventTarget(){
     }
   
-    EventTarget.prototype = {
-        constructor: EventTarget,
+    CustomEventTarget.prototype = {
+        constructor: CustomEventTarget,
   
         addListener: function(type, listener){
   
@@ -45,5 +45,5 @@ let CustomEventTarget = (function setEvents() {
         }
     };
    
-   return EventTarget;
+   return CustomEventTarget;
 })();

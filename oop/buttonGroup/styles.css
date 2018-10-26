@@ -27,12 +27,18 @@ html {
     margin: 5px 10px;
     cursor: pointer;
     display: block;
+    transform: translateZ(0);
 }
 
 .group__button--disabled {
     cursor: not-allowed !important;
     background-color: #ccc !important;
     color: #aaa;
+    box-shadow: none;
+}
+
+.group__button:focus {
+    box-shadow: none;
 }
 
 .group__button--selected {

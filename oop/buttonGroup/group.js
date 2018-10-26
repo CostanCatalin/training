@@ -1,6 +1,6 @@
 let Group = (function groupModule() {
 
-    function Group(type, active = true, selected = false, customStyle='') {
+    function Group(type, id, active = true, selected = false, customStyle='') {
         if (!this instanceof Group) {
             return new Group();
         }
@@ -9,20 +9,22 @@ let Group = (function groupModule() {
         this.active = active;
         this.selected = selected;
         this.customStyle = customStyle;
+        this.element = this.createEquivElement(id);
     }
 
     Group.prototype = new CustomEventTarget();
+    Group.prototype.constructor = Group;
 
     Object.assign(Group.prototype, {
-        setState: function(selected) {
-            if (this.active) {
-                this.selected = selected;
-            }
-        },
-
         addButton: function(button) {
             if (button instanceof Button) {
+
+                if (this.type == 'radio') {
+                    button.element.classList.add('group__button--radio-button');
+                }
+                
                 this.buttons.push(button);
+                this.element.append(button.element);
             }
         },
 
@@ -55,7 +57,7 @@ let Group = (function groupModule() {
             return button;
         },
 
-        setSelected: function(buttonId, selected) {
+        setSelected: function(buttonId) {
 
             element = this.getById(buttonId);
             if (!element) {
@@ -63,14 +65,13 @@ let Group = (function groupModule() {
             }
 
             element.selected = !element.selected;
-            
-            document.querySelector('.group__button[related-object-id="' + element.id + '"]').replaceWith(element.displayElement());
+            document.querySelector('.group__button[related-object-id="' + element.id + '"]').classList.toggle('group__button--selected');
     
             if (this.type == 'radio') {
-                this.buttons.forEach(function(element) {
-                    if (element.id != buttonId) {
-                        element.selected = false;
-                        let dest =  document.querySelector('.group__button[related-object-id="' + element.id + '"]');
+                this.buttons.forEach(function(neighbour) {
+                    if (neighbour.id != buttonId && neighbour.selected) {
+                        neighbour.selected = false;
+                        let dest =  document.querySelector('.group__button[related-object-id="' + neighbour.id + '"]');
                         dest.classList.remove('group__button--selected');
                     }
                 });
@@ -81,10 +82,17 @@ let Group = (function groupModule() {
             let group = document.createElement('div');
             group.classList.add("group", "group-" + id);
     
-            if (this.disabled == true) {
+            if (this.active == false) {
                 group.classList.add("group--disabled");
             } else if (this.type == 'radio') {
                 group.classList.add("group--radio");
+            }
+
+            if (this.customStyle.length > 0) {
+                let style = document.createElement('style');
+                style.type = 'text/css';
+                style.innerHTML = '.group-' + id + ' .group__button {' + this.customStyle + '}';
+                document.getElementsByTagName('head')[0].appendChild(style);
             }
     
             return group;

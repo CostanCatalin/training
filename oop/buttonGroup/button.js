@@ -2,7 +2,7 @@ let Button = (function buttonModule() {
     let id = 1;
     let wrapper = document.querySelector('.wrapper');
 
-    function Button(name, active = true, selected = false, parentCustomStyle='', customStyle='') {
+    function Button(name, active = true, selected = false, customStyle='') {
         if (!this instanceof Button) {
             return new Button();
         }
@@ -12,7 +12,6 @@ let Button = (function buttonModule() {
         this.active = active;
         this.selected = selected;
         this.customStyle = customStyle != null ? customStyle: '';
-        this.parentStyle = parentCustomStyle != null ? parentCustomStyle: ''
         this.element = this.displayElement();
 
         wrapper.addEventListener('click', buttonClicked);
@@ -36,9 +35,6 @@ let Button = (function buttonModule() {
             if (this.customStyle != null && this.customStyle.length > 0) {
                 btn.setAttribute('style', this.customStyle);
             }
-            if (this.parentStyle != null && this.parentStyle.length > 0) {
-                btn.setAttribute('style', (this.parentStyle == null ? '' : this.parentStyle) + this.customStyle);
-            }
     
             if (!this.active) {
                 btn.classList.add("group__button--disabled");
@@ -52,17 +48,15 @@ let Button = (function buttonModule() {
 
     function buttonClicked(e) {
         if (!e.target.classList.contains('group__button') ||
-        e.target.parentElement.classList.contains("group--disabled") ||
         e.target.classList.contains('group__button--disabled') ||
-        e.target.parentElement.classList.contains("group--radio") && e.target.classList.contains('group__button--selected')) {
+        e.target.classList.contains('group__button--radio-button') && e.target.classList.contains('group__button--selected')) {
             return;
         }
 
         let buttonId = parseInt(e.target.getAttribute('related-object-id'));
 
-        objects.forEach(function(group){
-
-            button = group.buttons.find(element => element.id == buttonId);
+        groups.forEach(function(group){
+            let button = group.buttons.find(element => element.id == buttonId );
             
             if (button != undefined) { 
 
@@ -73,6 +67,7 @@ let Button = (function buttonModule() {
             }
         });
     }
-
+    
+    Button.prototype.constructor = Button;
     return Button;
 })();
