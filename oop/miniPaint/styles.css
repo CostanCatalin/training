@@ -1,0 +1,37 @@
+body,
+html {
+    margin: 0;
+    font-family: Verdana, sans-serif;
+}
+
+h1 {
+    padding-top: 45px;
+    text-align: center;
+}
+
+.wrapper {
+    margin: 20px auto;
+    border: 2px solid #ccc;
+}
+/* 
+.wrapper button{
+    cursor: url('img/pencil.png'), pointer;
+}
+
+.wrapper.eraser button {
+    cursor: url('img/eraser.png'), pointer;
+} */
+
+
+button {
+    user-select: none;
+    outline-style: none;
+    display: inline-block;
+    padding: 0;
+    border: none;
+    background-color: white;
+}
+
+.group__button--active {
+    background-color: black;
+}

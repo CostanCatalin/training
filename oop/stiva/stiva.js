@@ -31,6 +31,7 @@ let Stiva = (function StivaConfig() {
             array.unshift(item);
             return array.length;
         },
+
         top: function() {
             if (array.length == 0) {
                 console.log("%cStack is empty", "color: red;");
@@ -39,6 +40,7 @@ let Stiva = (function StivaConfig() {
 
             return array[0];
         },
+
         pop: function() {
             if (array.length == 0) {
                 console.log("%cStack is empty", "color: red;");
@@ -49,15 +51,19 @@ let Stiva = (function StivaConfig() {
             array.splice(0, 1);
             return value;
         },
+
         is_empty: function() {
             return array.length == 0 ;
         },
+
         is_full: function() {
             return array.length == limit;
         },
+
         get_size: function() {
             return array.length;
         },
+        
         clear: function() {
             array = [];
         }
