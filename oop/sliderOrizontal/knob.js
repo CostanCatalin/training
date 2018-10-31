@@ -8,6 +8,7 @@ let Knob = (function KnobInitializer() {
         this.customClass = customClass;
         this.axis = axis;
         this.currentPercentage = 0;
+        this._listeners = [];
 
         this.element = this.createElement();
         this.barWidth = this.barRect.right - this.barRect.left - BUTTON_WIDTH;
@@ -49,9 +50,11 @@ let Knob = (function KnobInitializer() {
         setCurrentPercentage: function(val) {
             this.element.style.left =  val * this.barWidth + "px";
             this.currentPercentage = val;
-
-            console.log(this.currentPercentage);
-            // raise event
+            
+            this.fire({
+                type: 'value_changed',
+                data: this.currentPercentage
+            })
         },
 
         windowResizedListener: function (e) {
@@ -75,6 +78,43 @@ let Knob = (function KnobInitializer() {
             }
 
             return elem;
+        },
+
+        addListener: function(type, listener){
+  
+            if (typeof this._listeners[type] == "undefined"){
+                this._listeners[type] = [];
+            }
+  
+            this._listeners[type].push(listener);
+        },
+        fire: function(event){
+  
+            if (!event.target){
+                event.target = this;
+            }
+  
+            if (!event.type){ // falsy
+                throw new Error("Event object missing 'type' property.");
+            }
+  
+            if (this._listeners && this._listeners[event.type] instanceof Array){
+                var listeners = this._listeners[event.type];
+                for (var i=0, len=listeners.length; i < len; i++){
+                    listeners[i].call(this, event);
+                }
+            }
+        },
+        removeListener: function(type, listener){
+            if (this._listeners && this._listeners[type] instanceof Array){
+                var listeners = this._listeners[type];
+                for (var i=0, len=listeners.length; i < len; i++){
+                    if (listeners[i] === listener){
+                        listeners.splice(i, 1);
+                        break;
+                    }
+                }
+            }
         }
     });
 

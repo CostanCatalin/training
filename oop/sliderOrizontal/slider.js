@@ -7,6 +7,7 @@ let Slider = (function() {
         }
 
         this.customClass = customClass;
+        this.currentVal = min;
         let minVal = min;
         let maxVal = max;
         this.element = null;
@@ -43,7 +44,7 @@ let Slider = (function() {
         });
         
         this.createEquivElement(parent);
-        this.addEvents(this.element, minVal, maxVal);
+        this.addEvents();
     };
 
     Object.assign(Slider.prototype, {
@@ -59,23 +60,24 @@ let Slider = (function() {
             if (this.customClass != null) {
                 slider.classList.add(this.customClass);
             }
-    
-            let bar = document.createElement('div');
+
+            let currentVal = document.createElement('p');
+            currentVal.classList.add('current-value');
+            currentVal.innerText = this.currentVal;
+
+            let bar = document.createElement('d');
             bar.classList.add('bar', 'vertical-center');
 
-            slider.append(bar);
+            slider.append(currentVal, bar);
     
             this.element = slider;
             dest.append(slider);
         },
 
-        addEvents: function(element, min, max) {
+        addEvents: function() {
 
-            this.Max = max;
-            this.Min = min;
-
-            this.bar = element.querySelector('.bar');
-            this.currentValueDisplay = element.querySelector('.current-value');
+            this.bar = this.element.querySelector('.bar');
+            this.currentValueDisplay = this.element.querySelector('.current-value');
             
             this.barRect = this.bar.getBoundingClientRect();
             
@@ -84,11 +86,18 @@ let Slider = (function() {
 
             this.barWidth = this.barRect.right - this.barRect.left - this.knob.element.offsetWidth;
 
-            this.element.addEventListener("click", this.barClicked.bind(this));
+            this.element.addEventListener("mousedown", this.barClicked.bind(this));
+            this.knob.addListener("value_changed", this.newValue.bind(this));
         },
 
         barClicked: function(e) {
-            this.knob.currentPercentageFromPointer(e.pageX);
+            this.knob.mouseDownListener(e);
+        },
+
+        newValue: function(e) {
+            this.currentVal = Math.round(e.data * (this.max - this.min)) + this.min;
+            this.currentValueDisplay.innerText = this.currentVal;
+            console.log(this.currentVal);
         }
     });
 
