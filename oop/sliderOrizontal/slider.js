@@ -1,16 +1,16 @@
 let Slider = (function() {
     let slidersIdx = 0;
 
-    function Slider(parent, min, max, width = 300, style = '') {
+    function Slider(parent, min, max, customClass = false) {
         if (!this instanceof Slider) {
-            return new Slider(parent, min, max, width, style);
+            return new Slider(parent, min, max, customClass);
         }
 
-        this.style = style;
+        this.customClass = customClass;
         let minVal = min;
         let maxVal = max;
-        let widthVal = width;
         this.element = null;
+        this.clicked = false;
 
         Object.defineProperty(this, 'min', {
             set(val) {
@@ -41,73 +41,56 @@ let Slider = (function() {
                 return maxVal;
             },
         });
-
-        Object.defineProperty(this, 'width', {
-            set(val) {
-                if (isNaN(val)) {
-                    console.log('%c[Error] Width must be a number', 'color: red;');
-                } else if (val <= 0) {
-                    console.log('%c[Error] Width must be greater than 0', 'color: red;');
-                } else {
-                    widthVal  = val;
-                }
-            },
-            get() {
-                return widthVal;
-            },
-        });
         
         this.createEquivElement(parent);
         this.addEvents(this.element, minVal, maxVal);
     };
 
-    Slider.prototype = new DropDownEvents();
-    Slider.prototype.constructor = Slider;
+    Object.assign(Slider.prototype, {
+        createEquivElement: function(parent) {
+            let dest = document.querySelector(parent);
+    
+            if (dest == undefined) {
+                dest = document.querySelector('.wrapper');
+            }
+    
+            let slider = document.createElement('div');
+            slider.classList.add('slider', 'slider-' + slidersIdx++);
+            if (this.customClass != null) {
+                slider.classList.add(this.customClass);
+            }
+    
+            let bar = document.createElement('div');
+            bar.classList.add('bar', 'vertical-center');
 
-    Slider.prototype.createEquivElement = function(parent) {
-        let dest = document.querySelector(parent);
+            slider.append(bar);
+    
+            this.element = slider;
+            dest.append(slider);
+        },
 
-        if (dest == undefined) {
-            dest = document.querySelector('.wrapper');
+        addEvents: function(element, min, max) {
+
+            this.Max = max;
+            this.Min = min;
+
+            this.bar = element.querySelector('.bar');
+            this.currentValueDisplay = element.querySelector('.current-value');
+            
+            this.barRect = this.bar.getBoundingClientRect();
+            
+            this.knob = new Knob(this.bar, ['button', 'vertical-center'], 'y');
+            this.element.append(this.knob.element);
+
+            this.barWidth = this.barRect.right - this.barRect.left - this.knob.element.offsetWidth;
+
+            this.element.addEventListener("click", this.barClicked.bind(this));
+        },
+
+        barClicked: function(e) {
+            this.knob.currentPercentageFromPointer(e.pageX);
         }
-
-        let slider = document.createElement('div');
-        slider.classList.add('slider', 'slider-' + slidersIdx++);
-        if (this.style.length > 0) {
-            slider.setAttribute("style", this.style);
-        }
-
-        //display values
-        let min = document.createElement('p');
-        min.classList.add('min-value', 'vertical-center');
-        min.innerText = this.min;
-
-        let currentValue = document.createElement('p');
-        currentValue.classList.add('current-value');
-        currentValue.innerText = this.min;
-
-        let max = document.createElement('p');
-        max.classList.add('max-value', 'vertical-center');
-        max.innerText = this.max;
-
-        // the controls
-        let bar = document.createElement('div');
-        bar.classList.add('bar', 'vertical-center');
-
-        let button = document.createElement('div');
-        button.classList.add('button', 'vertical-center');
-        
-        bar.append(button);
-        slider.append(min, currentValue, max, bar);
-        slider.style.width = this.width + 'px';
-
-        if (this.style.length > 0) {
-            slider.setAttribute('style', this.style + "; width: " + this.width + "px;");
-        }
-
-        this.element = slider;
-        dest.append(slider);
-    };
+    });
 
     return Slider;
 })();

@@ -57,3 +57,17 @@ h1{
     top: 50%;
     transform: translateY(-50%);
 }
+
+
+.slider-custom-1 {
+    width: 100px;
+    background-color: pink;
+}
+
+.slider-custom-2 {
+    width: 250px;
+}
+
+.slider-custom-2 .button {
+    background-color: pink;
+}
