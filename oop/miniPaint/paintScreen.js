@@ -116,6 +116,17 @@ let PaintScreen = (function initializePaintScreen() {
 
             if (this.modeIsPencil && btn && !btn.active) {
                 btn.setState(true);
+                if (this.actionChanges.length > 0) {
+                    this.completeInBetween(
+                        {
+                            line: this.actionChanges[this.actionChanges.length - 1].line,
+                            column: this.actionChanges[this.actionChanges.length - 1].column
+                        }, {
+                            line: coords.line,
+                            column: coords.column
+                        }
+                    );
+                }
                 this.actionChanges.push({line: coords.line, column: coords.column});
             } else if (!this.modeIsPencil) {
                 this.eraseByCoords(coords.line, coords.column);
@@ -190,6 +201,26 @@ let PaintScreen = (function initializePaintScreen() {
         toggleMode: function() {
             this.modeIsPencil = !this.modeIsPencil;
             this.dest.classList.toggle("eraser");
+        },
+
+        completeInBetween: function(from, to) {
+            let lineDiff = to.line - from.line;
+            let colDiff = to.column - from.column;
+            if (Math.abs(lineDiff) <= 1 && Math.abs(colDiff) <= 1) {
+                return;
+            }
+
+            let maxDiff = Math.max(Math.abs(lineDiff), Math.abs(colDiff));
+
+            for (let i = 1; i < maxDiff; i++) {
+                let newLine = from.line + Math.round((i / maxDiff) * lineDiff);
+                let newCol = from.column + Math.round((i / maxDiff) * colDiff);
+
+                let btn = this.matrix[newLine][newCol];
+                btn.setState(true);
+                this.actionChanges.push({line: newLine, column: newCol});
+            }
+
         },
 
         // -- event methods for Undo/Redo Buttons
