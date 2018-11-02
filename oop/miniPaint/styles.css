@@ -41,7 +41,7 @@ h1 {
 }
 
 .group {
-margin: 10px auto;
+    margin: 10px auto;
 }
 
 .group .btn {
@@ -50,12 +50,14 @@ margin: 10px auto;
     border: none;
     padding: 10px 15px;
     width: 29%;
+    user-select: none;
     cursor: pointer;
 }
 
 .group .group__button--disabled {
     background-color: #ccc;
     color: #aaa;
+    cursor: initial;
     outline: none;
 }
 

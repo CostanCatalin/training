@@ -29,12 +29,10 @@ let groups = [];
     });
 
     paintScreen.addListener("has_undo", function(e) {
-        console.log(groups[0].getById(1));
-            groups[0].getById(1).setActive(e.data);
+        groups[0].getById(1).setActive(e.data);
     });
 
     paintScreen.addListener("has_redo", function(e) {
-        console.log(groups[0].getById(2));
         groups[0].getById(2).setActive(e.data);
     });
 

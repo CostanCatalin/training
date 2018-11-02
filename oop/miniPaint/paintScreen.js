@@ -5,7 +5,7 @@ let PaintScreen = (function initializePaintScreen() {
     const eraserSize = 10;
 
     function PaintScreen(destSelector, numberOfPixels, pixelSize) {
-        this.storage = new StorageManager("paint_matrix");
+        this.storage = new StorageManager("paint_matrix", {size: pixelSize, number: numberOfPixels});
         this.undoStack = new Stiva(stackLimit);
         this.redoStack = new Stiva(stackLimit);
 
@@ -18,6 +18,10 @@ let PaintScreen = (function initializePaintScreen() {
         this.actionChanges = [];
         this.matrix = [];
         this.initialize();
+
+        // Important, otherwise the event handlers can't be un-binded
+        this.mouseMoveHandlerWithContext = this.mouseMoveHandler.bind(this);
+        this.mouseUpHandlerWithContext = this.mouseUpHandler.bind(this)
     }
 
     Object.assign(PaintScreen.prototype, {
@@ -45,9 +49,9 @@ let PaintScreen = (function initializePaintScreen() {
                 }
             }
 
-            window.addEventListener('keydown', this.shortcuts.bind(this));
             this.dest.addEventListener('mousedown', this.mouseDownHandler.bind(this));
         },
+
         undo: function() {
             if (this.undoStack.get_size() == 0) {
                 return;
@@ -63,6 +67,7 @@ let PaintScreen = (function initializePaintScreen() {
                 this.fire({type: "has_undo",data: false});
             }
         },
+
         redo: function() {
             if (this.redoStack.get_size() == 0) {
                 return;
@@ -78,61 +83,46 @@ let PaintScreen = (function initializePaintScreen() {
                 this.fire({type: "has_redo",data: false});
             }
         },
+
         reset: function() {
-            if (!confirm("Are you sure you want to delete all?")) {
+            if (!confirm("Delete everything and start from scratch?")) {
                 return;
             }
             this.storage.clear();
             location.reload();
             return;
         },
-        shortcuts: function(e) {
-            if (e.key.toLowerCase() == 't') {
-                this.toggleMode();
-                return;
-            }
 
-            if (e.key.toLowerCase() == 'd') {
-                this.reset();
-                return;
-            }
-
-            if (!e.ctrlKey || e.key.toLowerCase() != 'z') {
-                return;
-            }
-
-            if (e.shiftKey) {
-                this.redo();
-            } else {
-                this.undo();
-            } 
-        },
-        mouseDownHandler: function(e) {
+        mouseDownHandler: function() {
             this.inAction = true;
             this.actionChanges = [];
             
-            document.body.addEventListener('mouseup', this.mouseUpHandler.bind(this));
-            this.dest.addEventListener('mousemove', this.mouseMoveHandler.bind(this));
+            document.body.addEventListener('mouseup', this.mouseUpHandlerWithContext);
+            this.dest.addEventListener('mousemove', this.mouseMoveHandlerWithContext);
         },
-        mouseMoveHandler: function(e) {
-            if(this.inAction) {
-                let coords = this.getElementByCoordinates(e.pageX, e.pageY);
-            
-                if (!coords) {
-                    return;
-                }                  
-                
-                let btn = this.matrix[coords.line][coords.column];
 
-                if (this.modeIsPencil && btn && !btn.active) {
-                    btn.setState(true);
-                    this.actionChanges.push({line: coords.line, column: coords.column});
-                } else if (!this.modeIsPencil) {
-                    this.eraseByCoords(coords.line, coords.column);
-                }
+        mouseMoveHandler: function(e) {
+            if(!this.inAction) {
+                return;
+            }
+
+            let coords = this.getElementByCoordinates(e.pageX, e.pageY);
+        
+            if (!coords) {
+                return;
+            }                  
+            
+            let btn = this.matrix[coords.line][coords.column];
+
+            if (this.modeIsPencil && btn && !btn.active) {
+                btn.setState(true);
+                this.actionChanges.push({line: coords.line, column: coords.column});
+            } else if (!this.modeIsPencil) {
+                this.eraseByCoords(coords.line, coords.column);
             }
         },
-        mouseUpHandler: function(e) {
+
+        mouseUpHandler: function() {
             this.inAction = false;
 
             if (this.actionChanges.length > 0) {
@@ -145,9 +135,10 @@ let PaintScreen = (function initializePaintScreen() {
             }
 
             this.storage.set(this.matrix);
-            document.body.removeEventListener('mouseup', this.mouseUpHandler);
-            this.dest.removeEventListener('mousemove', this.mouseMoveHandler);
+            document.body.removeEventListener('mouseup', this.mouseUpHandlerWithContext);
+            this.dest.removeEventListener('mousemove', this.mouseMoveHandlerWithContext);
         },
+
         getElementByCoordinates: function(x, y) {
             this.rect = this.dest.getBoundingClientRect();
 
@@ -161,14 +152,12 @@ let PaintScreen = (function initializePaintScreen() {
             line = Math.ceil(relativeY / this.pixelSize) - 2;
             col = Math.ceil(relativeX / this.pixelSize) - 2;
 
-            line = line > 0 ? line : 0;
-            col = col > 0 ? col : 0;
-
             return { 
-                line: line,
-                column: col
+                line: line > 0 ? line : 0,
+                column: col > 0 ? col : 0
             };
         },
+
         eraseByCoords: function(line, column) {
             let offset = Math.ceil(eraserSize / this.pixelSize);
             if (0 > line > this.matrix.length ||
@@ -185,6 +174,7 @@ let PaintScreen = (function initializePaintScreen() {
                 }
             }
         },
+
         applyChanges: function(changes, isPencilMode) {
             for (let i = 0; i < changes.length; i++) {
                 let btn = this.matrix[changes[i].line][changes[i].column];
@@ -196,10 +186,13 @@ let PaintScreen = (function initializePaintScreen() {
                 }
             }
         },
+
         toggleMode: function() {
             this.modeIsPencil = !this.modeIsPencil;
             this.dest.classList.toggle("eraser");
         },
+
+        // -- event methods for Undo/Redo Buttons
         addListener: function(type, listener){
   
             if (typeof _listeners[type] == "undefined"){
@@ -208,6 +201,7 @@ let PaintScreen = (function initializePaintScreen() {
   
             _listeners[type].push(listener);
         },
+
         fire: function(event){
   
             if (!event.target){
@@ -219,12 +213,12 @@ let PaintScreen = (function initializePaintScreen() {
             }
   
             if (_listeners && _listeners[event.type] instanceof Array){
-                var listeners = _listeners[event.type];
-                for (var i=0, len=listeners.length; i < len; i++){
+                let listeners = _listeners[event.type];
+                for (let i = 0, len = listeners.length; i < len; i++){
                     listeners[i].call(this, event);
                 }
             }
-        },
+        }
     });
 
     return PaintScreen;
