@@ -1,13 +1,8 @@
 let PaintScreen = (function initializePaintScreen() {
-    let _listeners = [];
     const activeClass = "group__button--active";
-    const stackLimit = 30;
     const eraserSize = 10;
 
-    function PaintScreen(destSelector, numberOfPixels, pixelSize) {
-        this.storage = new StorageManager("paint_matrix", {size: pixelSize, number: numberOfPixels});
-        this.undoStack = new Stiva(stackLimit);
-        this.redoStack = new Stiva(stackLimit);
+    function PaintScreen(destSelector, numberOfPixels, pixelSize, initMatrix = null) {
 
         this.dest = document.querySelector(destSelector);
         this.rect = this.dest.getBoundingClientRect();
@@ -17,15 +12,18 @@ let PaintScreen = (function initializePaintScreen() {
         this.inAction = false;
         this.actionChanges = [];
         this.matrix = [];
-        this.initialize();
+        this.initialize(initMatrix);
 
         // Important, otherwise the event handlers can't be un-binded
         this.mouseMoveHandlerWithContext = this.mouseMoveHandler.bind(this);
         this.mouseUpHandlerWithContext = this.mouseUpHandler.bind(this)
     }
 
+    PaintScreen.prototype = new CustomEventTarget();
+    PaintScreen.prototype.constructor = PaintScreen;
+
     Object.assign(PaintScreen.prototype, {
-        initialize: function() {
+        initialize: function(initMatrix) {
             let style = document.createElement('style');
             style.innerHTML = '.wrapper .btn{ width: ' + this.pixelSize + 'px; height: ' +  this.pixelSize + 'px}';
             document.head.append(style);
@@ -33,17 +31,16 @@ let PaintScreen = (function initializePaintScreen() {
             this.dest.style.maxWidth = this.numberOfPixels + (this.pixelSize - this.numberOfPixels % this.pixelSize) + "px";
             let lineSize = this.numberOfPixels / this.pixelSize;
 
-            let storedMatrix = this.storage.get();
-
             for (let i = 0; i <= lineSize; i++) {
                 this.matrix.push([]);
 
                 for (let j = 0; j <= lineSize; j++) {
                     let newPixel = new Pixel();
 
-                    if (storedMatrix && storedMatrix[i][j].active) {
+                    if (initMatrix && initMatrix[i][j].active) {
                         newPixel.setState(true);
                     }
+
                     this.dest.appendChild(newPixel.element);
                     this.matrix[this.matrix.length - 1].push(newPixel);
                 }
@@ -52,43 +49,11 @@ let PaintScreen = (function initializePaintScreen() {
             this.dest.addEventListener('mousedown', this.mouseDownHandler.bind(this));
         },
 
-        undo: function() {
-            if (this.undoStack.get_size() == 0) {
-                return;
-            }
-            let move = this.undoStack.pop();
-            this.redoStack.push(move);
-            
-            this.applyChanges(move.changes, move.pencil);
-            this.storage.set(this.matrix);
-
-            this.fire({type: "has_redo",data: true});
-            if (this.undoStack.get_size() == 0) {
-                this.fire({type: "has_undo",data: false});
-            }
-        },
-
-        redo: function() {
-            if (this.redoStack.get_size() == 0) {
-                return;
-            }
-            let move = this.redoStack.pop();
-            this.undoStack.push(move);
-
-            this.applyChanges(move.changes, !move.pencil);
-            this.storage.set(this.matrix);
-
-            this.fire({type: "has_undo",data: true});
-            if (this.redoStack.get_size() == 0) {
-                this.fire({type: "has_redo",data: false});
-            }
-        },
-
         reset: function() {
             if (!confirm("Delete everything and start from scratch?")) {
                 return;
             }
-            this.storage.clear();
+            this.fire({type: "reset", data: true});
             location.reload();
             return;
         },
@@ -115,6 +80,7 @@ let PaintScreen = (function initializePaintScreen() {
             let btn = this.matrix[coords.line][coords.column];
 
             if (this.modeIsPencil && btn && !btn.active) {
+
                 btn.setState(true);
                 if (this.actionChanges.length > 0) {
                     this.completeInBetween(
@@ -137,15 +103,12 @@ let PaintScreen = (function initializePaintScreen() {
             this.inAction = false;
 
             if (this.actionChanges.length > 0) {
-                this.undoStack.push({changes: this.actionChanges, pencil: this.modeIsPencil});
+                this.fire({type: "new_move", data: {changes: this.actionChanges, pencil: this.modeIsPencil}});
                 this.actionChanges = [];
-                this.redoStack.clear();
-
-                this.fire({type: "has_undo",data: true});
-                this.fire({type: "has_redo",data: false});
             }
 
-            this.storage.set(this.matrix);
+            this.fire({type: "update_matrix",data: this.matrix});
+
             document.body.removeEventListener('mouseup', this.mouseUpHandlerWithContext);
             this.dest.removeEventListener('mousemove', this.mouseMoveHandlerWithContext);
         },
@@ -221,34 +184,6 @@ let PaintScreen = (function initializePaintScreen() {
                 this.actionChanges.push({line: newLine, column: newCol});
             }
 
-        },
-
-        // -- event methods for Undo/Redo Buttons
-        addListener: function(type, listener){
-  
-            if (typeof _listeners[type] == "undefined"){
-                _listeners[type] = [];
-            }
-  
-            _listeners[type].push(listener);
-        },
-
-        fire: function(event){
-  
-            if (!event.target){
-                event.target = this;
-            }
-  
-            if (!event.type){ // falsy
-                throw new Error("Event object missing 'type' property.");
-            }
-  
-            if (_listeners && _listeners[event.type] instanceof Array){
-                let listeners = _listeners[event.type];
-                for (let i = 0, len = listeners.length; i < len; i++){
-                    listeners[i].call(this, event);
-                }
-            }
         }
     });
 
