@@ -1,4 +1,5 @@
 let PaintScreen = (function initializePaintScreen() {
+    let _listeners = [];
     const activeClass = "group__button--active";
     const stackLimit = 30;
     const eraserSize = 10;
@@ -22,7 +23,7 @@ let PaintScreen = (function initializePaintScreen() {
     Object.assign(PaintScreen.prototype, {
         initialize: function() {
             let style = document.createElement('style');
-            style.innerHTML = '.btn{ width: ' + this.pixelSize + 'px; height: ' +  this.pixelSize + 'px}';
+            style.innerHTML = '.wrapper .btn{ width: ' + this.pixelSize + 'px; height: ' +  this.pixelSize + 'px}';
             document.head.append(style);
 
             this.dest.style.maxWidth = this.numberOfPixels + (this.pixelSize - this.numberOfPixels % this.pixelSize) + "px";
@@ -56,6 +57,11 @@ let PaintScreen = (function initializePaintScreen() {
             
             this.applyChanges(move.changes, move.pencil);
             this.storage.set(this.matrix);
+
+            this.fire({type: "has_redo",data: true});
+            if (this.undoStack.get_size() == 0) {
+                this.fire({type: "has_undo",data: false});
+            }
         },
         redo: function() {
             if (this.redoStack.get_size() == 0) {
@@ -65,8 +71,20 @@ let PaintScreen = (function initializePaintScreen() {
             this.undoStack.push(move);
 
             this.applyChanges(move.changes, !move.pencil);
-
             this.storage.set(this.matrix);
+
+            this.fire({type: "has_undo",data: true});
+            if (this.redoStack.get_size() == 0) {
+                this.fire({type: "has_redo",data: false});
+            }
+        },
+        reset: function() {
+            if (!confirm("Are you sure you want to delete all?")) {
+                return;
+            }
+            this.storage.clear();
+            location.reload();
+            return;
         },
         shortcuts: function(e) {
             if (e.key.toLowerCase() == 't') {
@@ -75,11 +93,7 @@ let PaintScreen = (function initializePaintScreen() {
             }
 
             if (e.key.toLowerCase() == 'd') {
-                if (!confirm("Are you sure you want to delete all?")) {
-                    return;
-                }
-                this.storage.clear();
-                location.reload();
+                this.reset();
                 return;
             }
 
@@ -125,6 +139,9 @@ let PaintScreen = (function initializePaintScreen() {
                 this.undoStack.push({changes: this.actionChanges, pencil: this.modeIsPencil});
                 this.actionChanges = [];
                 this.redoStack.clear();
+
+                this.fire({type: "has_undo",data: true});
+                this.fire({type: "has_redo",data: false});
             }
 
             this.storage.set(this.matrix);
@@ -182,7 +199,32 @@ let PaintScreen = (function initializePaintScreen() {
         toggleMode: function() {
             this.modeIsPencil = !this.modeIsPencil;
             this.dest.classList.toggle("eraser");
-        }
+        },
+        addListener: function(type, listener){
+  
+            if (typeof _listeners[type] == "undefined"){
+                _listeners[type] = [];
+            }
+  
+            _listeners[type].push(listener);
+        },
+        fire: function(event){
+  
+            if (!event.target){
+                event.target = this;
+            }
+  
+            if (!event.type){ // falsy
+                throw new Error("Event object missing 'type' property.");
+            }
+  
+            if (_listeners && _listeners[event.type] instanceof Array){
+                var listeners = _listeners[event.type];
+                for (var i=0, len=listeners.length; i < len; i++){
+                    listeners[i].call(this, event);
+                }
+            }
+        },
     });
 
     return PaintScreen;

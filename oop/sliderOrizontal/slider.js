@@ -97,7 +97,6 @@ let Slider = (function() {
         newValue: function(e) {
             this.currentVal = Math.round(e.data * (this.max - this.min)) + this.min;
             this.currentValueDisplay.innerText = this.currentVal;
-            console.log(this.currentVal);
         }
     });
 

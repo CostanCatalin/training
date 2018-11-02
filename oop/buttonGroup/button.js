@@ -1,6 +1,6 @@
 let Button = (function buttonModule() {
     let id = 1;
-    let wrapper = document.querySelector('.wrapper');
+    let wrapper = document.querySelector('.controls');
 
     function Button(name, active = true, selected = false, customStyle='') {
         if (!this instanceof Button) {
@@ -18,11 +18,22 @@ let Button = (function buttonModule() {
     }
 
     Object.assign(Button.prototype, {
+        setActive: function(active) {
+            if (active == this.active) {
+                return;
+            }
+
+            this.active = active;
+            this.element.classList.toggle("group__button--disabled");
+        },
 
         setState: function(selected) {
-            if (this.active) {
-                this.selected = selected;
+            if (!this.active || selected == this.selected) {
+                return;
             }
+
+            this.selected = selected;   
+            this.element.classList.toggle("group__button--selected");
         },
 
         displayElement: function() {

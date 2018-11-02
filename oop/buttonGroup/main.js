@@ -1,5 +1,5 @@
 (function main() {
-    let dest = document.querySelector('body .wrapper');
+    let dest = document.querySelector('body .controls');
 
     function init() {
 
