@@ -56,9 +56,9 @@ QUnit.test("rotation -- RR", function(assert) {
     binaryTree.add(101);
     binaryTree.add(102);
     binaryTree.add(103);
+
     let res = binaryTree.dfs();
-    // const actual = [4, 2, 0, -1, 1, 3, 5, 101, 102, 103];
-    const expected = [2, 0, -1, 1, 101, 4, 3, 5, 102, 103];
+    const expected = [2, 0, -1, 1, 5, 4, 3, 102, 101, 103];
 
     assert.ok( arrayEquality(res, expected), "Passed!");
 });
@@ -69,8 +69,7 @@ QUnit.test("rotation -- LL", function(assert) {
     binaryTree.add(-3);
     binaryTree.add(-4);
     let res = binaryTree.dfs();
-    // const actual = [-1, -2, -3, -4, 2, 0, 1, 4, 3, 5]; 
-    const expected = [2, -3, -2, -1, 0, -4, 1, 4, 3, 5];
+    const expected = [2, -1, -3, -4, -2, 0, 1, 4, 3, 5];
     assert.ok( arrayEquality(res, expected), "Passed!");
 });
 
@@ -78,11 +77,10 @@ QUnit.test("rotation -- LR", function(assert) {
     let binaryTree = getInit();
     binaryTree.add(-5);
     binaryTree.add(-2);
-    binaryTree.add(-3);
+     binaryTree.add(-3);
     
     let res = binaryTree.dfs();
-    // const actual = [-1, -5, -2, -3, 2, 0, 1, 4, 3, 5];
-    const expected = [2, -5, -2, -1, -3, 0, 1, 4, 3, 5];
+    const expected = [2, -2, -5, -3, 0, -1, 1, 4, 3, 5];
     assert.ok( arrayEquality(res, expected), "Passed!");
 });
 
@@ -92,8 +90,8 @@ QUnit.test("rotation -- RL", function(assert) {
     binaryTree.add(7);
     
     let res = binaryTree.dfs();
-    // const actual = [2, 0, -1, 1, 5, 4, 3, 8, 7];
-    const expected = [2, 0, -1, 1, 4, 3, 7, 5, 8];
+    const expected = [2, 0, -1, 1, 7, 4, 3, 5, 8];
+    
     assert.ok( arrayEquality(res, expected), "Passed!");
 });
 
@@ -103,7 +101,7 @@ QUnit.test("deleting leaf", function( assert ) {
     let res = binaryTree.delete(5);
     let dfs = binaryTree.dfs();
     const expected = [2, 0, -1, 1, 4, 3];
-    
+
     assert.ok( res && dfs.indexOf(5) == -1 && arrayEquality(dfs, expected), "Passed!" );
 });
 
@@ -111,7 +109,7 @@ QUnit.test("deleting node", function( assert ) {
     let binaryTree = getInit();
     let res = binaryTree.delete(2);
     let dfs = binaryTree.dfs();
-    const expected = [1, 0, -1, 4, 3, 5];
+    const expected = [3, 0, -1, 1, 4, 5];
 
     assert.ok( res && dfs.indexOf(2) == -1 && arrayEquality(dfs, expected), "Passed!" );
 });

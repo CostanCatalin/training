@@ -106,8 +106,8 @@ let BinaryTree = (function BinaryTreeModule() {
                 return true;
             }
 
-            // has both children
-            let replacement = node.leftChild;
+            // has both children -- in-order successor (left-most leaf of right child)
+            let replacement = node.rightChild;
             while (replacement.leftChild != null) {
                 replacement = replacement.leftChild;
             }
@@ -175,11 +175,11 @@ let BinaryTree = (function BinaryTreeModule() {
             if (Math.abs(valueOrDefault(node.leftChild, 'height') - valueOrDefault(node.rightChild, 'height')) > 1) {
                 switch(rotationCase(node)) {
                     case 'LL':
-                        node = rightRotate(node);
+                        node.leftChild = rightRotate(node.leftChild);
                         break;
 
                     case 'RR':
-                        node = leftRotate(node);
+                        node.rightChild = leftRotate(node.rightChild);
                         break;
 
                     case 'LR':
@@ -192,8 +192,6 @@ let BinaryTree = (function BinaryTreeModule() {
                         node = leftRotate(node);
                         break;
                 }
-                
-                root = updateHeights(node);
             }
             node = node.parent;
         }
@@ -235,7 +233,7 @@ let BinaryTree = (function BinaryTreeModule() {
         let res = node.leftChild == null || node.rightChild != null && node.leftChild.height < node.rightChild.height ? 'R' : 'L';
 
         let child = res == 'L' ? node.leftChild : node.rightChild;
-        res += child.leftChild == null ? 'R' : 'L';
+        res += child.leftChild == null || child.rightChild != null && child.leftChild.height < child.rightChild.height ? 'R' : 'L';
 
         return res;
     }
@@ -262,6 +260,7 @@ let BinaryTree = (function BinaryTreeModule() {
             oldRoot.rightChild.parent = oldRoot;
         }
 
+        newRoot = updateHeights(newRoot);
         return newRoot;
     };
 
@@ -286,6 +285,7 @@ let BinaryTree = (function BinaryTreeModule() {
             oldRoot.leftChild.parent = oldRoot;
         }
         
+        newRoot = updateHeights(newRoot);
         return newRoot;
     };
 
@@ -305,7 +305,7 @@ let BinaryTree = (function BinaryTreeModule() {
     }
 
     function valueOrDefault(obj, prop) {
-        return (obj == null ? 0 : obj[prop]);
+        return (obj == null ? -1 : obj[prop]);
     }
 
     return BinaryTree;
