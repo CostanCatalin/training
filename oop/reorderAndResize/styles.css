@@ -1,0 +1,172 @@
+html,
+body {
+    margin: 0;
+}
+
+body {
+    font-family: Roboto, sans-serif;
+    font-size: medium;
+    color: #384652;
+    background-color: #F2F2F2;
+    padding-bottom: 150px;
+}
+
+h1 {
+    text-align: center;
+    margin: 50px auto;
+}
+
+.list {
+    position:relative;
+}
+
+.item {
+    width: 500px;
+    margin: 15px 0;
+    height: 30px;
+    position: relative;
+    left: 0;
+    right: 0;
+    border-radius: 15px;
+    background-color: #bbb;
+}
+
+.item:hover {
+    cursor: move;
+}
+
+.item .border{
+    display: none;
+    border: 2px dashed #d24726;
+    width: 505px;
+    height: 35px;
+    position: absolute;
+    z-index: 5;
+    bottom: -4px;
+    left: -4px;
+}
+
+.item-wrapper.hidden {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.item:hover .border{
+    display: initial;
+    pointer-events: none;
+}
+
+.item.clicked .border{
+    display: initial;
+    border: 2px solid #d24726;
+}
+
+.item-wrapper.hovered .item{
+    cursor: initial;
+}
+
+.moving .item:hover .border {
+    display: none;
+}
+
+.item-wrapper.moving {
+    user-select: none;
+}
+
+.item-wrapper.hovered::before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: #d24726;
+    position: relative;
+    bottom: 0px; 
+}
+
+.item .handler {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    /* background-color: pink; */
+}
+
+.item .handler div {
+    pointer-events: none;
+    width: 8px;
+    height: 8px;
+    border: 1px solid #d24726;
+    background-color: white;
+    position: relative;
+    z-index: 10;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%)
+}
+
+.handler-top,
+.handler-bottom {
+    cursor: n-resize;
+}
+
+.handler-left,
+.handler-right {
+    cursor: e-resize;
+}
+
+.handler-top-left,
+.handler-bottom-right {
+    cursor: nw-resize;
+}
+
+.handler-top-right,
+.handler-bottom-left {
+    cursor: ne-resize;
+}
+
+.handler-top {
+    left: 50%;
+    top: 7px;
+    transform: translate(-50%, -100%);
+}
+.handler-bottom {
+    left: 50%;
+    bottom: 7px;
+    transform: translate(-50%, 100%);
+}
+
+.handler-right {
+    right: 7px;
+    top: 50%;
+    transform: translate(100%, -50%);
+}
+.handler-left {
+    left: 7px;
+    top: 50%;
+    transform: translate(-100%, -50%);
+}
+
+
+.handler-top-right {    
+    right: 7px;
+    top: 7px;
+    transform: translate(100%, -100%);
+}
+
+.handler-bottom-right {    
+    right: 7px;
+    bottom: 7px;
+    transform: translate(100%, 100%);
+}
+
+
+.handler-top-left {    
+    left: 7px;
+    top: 7px;
+    transform: translate(-100%, -100%);
+}
+
+.handler-bottom-left {    
+    left: 7px;
+    bottom: 7px;
+    transform: translate(-100%, 100%);
+}

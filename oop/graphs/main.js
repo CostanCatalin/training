@@ -13,5 +13,4 @@
 
     let barH = GraphFactory(input, GraphTypeEnum.HorizontalBar);
     document.body.appendChild(barH.draw());
-    // debugger;
 })(input);
