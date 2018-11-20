@@ -1,0 +1,85 @@
+html,
+body {
+    margin: 0;
+}
+
+body {
+    font-family: Roboto, sans-serif;
+    font-size: medium;
+    color: #384652;
+    background-color: #F2F2F2;
+    padding-bottom: 150px;
+    overflow-y: hidden;
+}
+
+h1 {
+    text-align: center;
+    margin: 50px auto;
+}
+
+.list {
+    position:relative;
+}
+
+.item {
+    margin: 15px 0;
+    position: relative;
+    left: 0;
+    right: 0;
+    border-radius: 15px;
+    fill: #bbb;
+}
+
+.item:hover {
+    cursor: move;
+}
+
+.item-wrapper.hidden {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.moving {
+    position: absolute;
+}
+
+.moving .item:hover .border {
+    display: none;
+}
+
+.item-wrapper.moving {
+    user-select: none;
+}
+
+/* .item-wrapper.hovered path {
+    fill: #d24726 !important;
+} */
+.item-wrapper.hovered .indicator{
+    stroke: #d24726;
+}
+
+.handler {
+    width: 10px;
+    height: 10px;
+    fill: white;
+}
+
+.handler-top,
+.handler-bottom {
+    cursor: n-resize;
+}
+
+.handler-left,
+.handler-right {
+    cursor: e-resize;
+}
+
+.handler-top-left,
+.handler-bottom-right {
+    cursor: nw-resize;
+}
+
+.handler-top-right,
+.handler-bottom-left {
+    cursor: ne-resize;
+}
