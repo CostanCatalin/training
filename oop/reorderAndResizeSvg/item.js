@@ -29,10 +29,16 @@ let Item = (function initializeItem(){
             this.element.setAttribute('transform', 'translate(' + this.coord.x + ',' + this.coord.y + ')')
         },
 
-        redraw: function() {
+        redraw: function(elem) {
+            if (!isNaN(elem)) {
+                elem = this.element.querySelector('.item');
+            }
+            
+            let displayWidth = this.width - padding;
             let roundingOffset = this.height / 2;
-            let displayWidth = this.width - padding - roundingOffset;
-            this.element.querySelector('.item').setAttribute('d', 'M 0, 0' +
+            if (roundingOffset > displayWidth / 2) roundingOffset = displayWidth / 2;
+            displayWidth -= roundingOffset;
+            elem.setAttribute('d', 'M 0, 0' +
             ' L ' + displayWidth  + ' 0' + 
             ' Q ' + (displayWidth + roundingOffset) + ' 0 ' + (displayWidth + roundingOffset) + ' ' + ( this.height / 2) +
             ' Q ' + (displayWidth + roundingOffset) + ' ' + this.height + ' ' + displayWidth + ' ' + this.height +
@@ -43,21 +49,13 @@ let Item = (function initializeItem(){
     });
 
     function createElement(customClass, self) {
-        let displayWidth = self.width - 2 * padding;
-
         let wrapper = document.createElementNS(svgNamespace, 'g');
         wrapper.classList.add('item-wrapper');
         wrapper.setAttribute('transform', 'translate(' + self.coord.x + ',' + self.coord.y + ')');
         
         let elem = document.createElementNS(svgNamespace, 'path');
 
-        elem.setAttribute('d', 'M 0, 0' +
-        ' L ' + displayWidth  + ' 0' + 
-        ' Q ' + (displayWidth + padding) + ' 0 ' + (displayWidth + padding) + ' ' + ( self.height / 2) +
-        ' Q ' + (displayWidth + padding) + ' ' + self.height + ' ' + displayWidth + ' ' + self.height +
-        ' L' + padding + ' ' + self.height + 
-        ' Q 0 ' + self.height + ' 0 ' + ( self.height / 2)  +
-        ' Q 0 0 ' + padding + ' 0 z');
+        self.redraw(elem);
 
         elem.classList.add('item');
         if (customClass != undefined) elem.classList.add(customClass);
@@ -108,11 +106,12 @@ let Item = (function initializeItem(){
             this.coord.y -= delta.height;
         }
         
-        this.redraw();
+        window.requestAnimationFrame(this.redraw.bind(this));
         this.updateCoord();
 
         if (!isTop || isFinished) {
             this.parentList.redraw();
+            window.requestAnimationFrame(this.parentList.redraw.bind(this.parentList));
         }
     }
 

@@ -82,7 +82,7 @@ let List = (function initializeList() {
         if (newIdx > oldIdx) newIdx--;
         
         this.items.splice(newIdx, 0 , item);
-        this.redraw();
+        window.requestAnimationFrame(this.redraw.bind(this));
     }
 
     return List;

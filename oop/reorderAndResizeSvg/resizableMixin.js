@@ -51,7 +51,7 @@ let resizableMixin = (function initializeResizable(){
             handlerTL.classList.add('handler', 'handler-top-left');
 
             wrapper.addEventListener("mousedown" , mouseDownHandler.bind(this));
-            updateResizeHandlers(self);
+            window.requestAnimationFrame(updateResizeHandlers.bind(this));
 
             wrapper.append(border, handlerT, handlerTR, handlerR, handlerBR, handlerB, handlerBL, handlerL, handlerTL)
             return wrapper;
@@ -59,31 +59,31 @@ let resizableMixin = (function initializeResizable(){
     };
 
     
-    function updateResizeHandlers(self) {
+    function updateResizeHandlers() {
         let offset = handlerSize / 2;
-        border.setAttribute('width', self.width);
-        border.setAttribute('height', self.height + padding);
+        border.setAttribute('width', this.width);
+        border.setAttribute('height', this.height + padding);
         
-        handlerT.setAttribute('x', self.width / 2 + offset - padding);
+        handlerT.setAttribute('x', this.width / 2 + offset - padding);
         handlerT.setAttribute('y', - offset);
 
-        handlerTR.setAttribute('x', self.width - offset);
+        handlerTR.setAttribute('x', this.width - offset);
         handlerTR.setAttribute('y', - offset);
 
-        handlerR.setAttribute('x', self.width - offset);
-        handlerR.setAttribute('y', self.height / 2);
+        handlerR.setAttribute('x', this.width - offset);
+        handlerR.setAttribute('y', this.height / 2);
 
-        handlerBR.setAttribute('x', self.width - offset);
-        handlerBR.setAttribute('y', self.height + offset);
+        handlerBR.setAttribute('x', this.width - offset);
+        handlerBR.setAttribute('y', this.height + offset);
     
-        handlerB.setAttribute('x', self.width / 2  + offset - padding);
-        handlerB.setAttribute('y', self.height + offset);
+        handlerB.setAttribute('x', this.width / 2  + offset - padding);
+        handlerB.setAttribute('y', this.height + offset);
         
         handlerBL.setAttribute('x', - offset);
-        handlerBL.setAttribute('y', self.height + offset);
+        handlerBL.setAttribute('y', this.height + offset);
 
         handlerL.setAttribute('x', - offset);
-        handlerL.setAttribute('y', self.height / 2);
+        handlerL.setAttribute('y', this.height / 2);
 
         handlerTL.setAttribute('x', - offset);
         handlerTL.setAttribute('y', - offset);
@@ -150,20 +150,12 @@ let resizableMixin = (function initializeResizable(){
             } 
         }
 
-        // so that there's no weird shape
-        if (self.height + delta.height > self.width + delta.width) {
-            return;
-        }
-
-        updateResizeHandlers(self);
+        window.requestAnimationFrame(updateResizeHandlers.bind(self));
         callback.call(self, delta, resizing);
     }
 
     function mouseUpHandler(e) {
-        // if isn't an annomaly shape
-        if (self.height + delta.height <= self.width + delta.width) {
-            callback.call(self, delta, resizing, true);
-        }
+        callback.call(self, delta, resizing, true);
         resizing = ResizeTypeEnum.None;
 
         document.body.removeEventListener("mousemove", mouseMoveHandler);
