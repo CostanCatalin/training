@@ -11,9 +11,9 @@ const X = 700;
 
 // -- Resizable
 const handlerSize = 10;
-const minWidth = 10 + 2 * padding;
+const minWidth = 10 ;
 const maxWidth = 1500;
-const minHeight = 30;
+const minHeight = 10;
 const maxHeight = 400;
 const strokeColor = '#d24726';
 

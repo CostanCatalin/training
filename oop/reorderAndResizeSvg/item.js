@@ -34,7 +34,7 @@ let Item = (function initializeItem(){
                 elem = this.element.querySelector('.item');
             }
             
-            let displayWidth = this.width - padding;
+            let displayWidth = this.width;
             let roundingOffset = this.height / 2;
             if (roundingOffset > displayWidth / 2) roundingOffset = displayWidth / 2;
             displayWidth -= roundingOffset;

@@ -53,30 +53,32 @@ let resizableMixin = (function initializeResizable(){
             wrapper.addEventListener("mousedown" , mouseDownHandler.bind(this));
             window.requestAnimationFrame(updateResizeHandlers.bind(this));
 
-            wrapper.append(border, handlerT, handlerTR, handlerR, handlerBR, handlerB, handlerBL, handlerL, handlerTL)
+            wrapper.append(border, handlerT, handlerTR, handlerR, handlerB, handlerBL, handlerBR, handlerL, handlerTL)
             return wrapper;
         },
     };
 
     
     function updateResizeHandlers() {
-        let offset = handlerSize / 2;
-        border.setAttribute('width', this.width);
+        const offset = handlerSize / 2;
+        const widthWithPadding = this.width + padding;
+
+        border.setAttribute('width', widthWithPadding);
         border.setAttribute('height', this.height + padding);
         
-        handlerT.setAttribute('x', this.width / 2 + offset - padding);
+        handlerT.setAttribute('x', widthWithPadding / 2 + offset - padding);
         handlerT.setAttribute('y', - offset);
 
-        handlerTR.setAttribute('x', this.width - offset);
+        handlerTR.setAttribute('x', widthWithPadding - offset);
         handlerTR.setAttribute('y', - offset);
 
-        handlerR.setAttribute('x', this.width - offset);
+        handlerR.setAttribute('x', widthWithPadding - offset);
         handlerR.setAttribute('y', this.height / 2);
 
-        handlerBR.setAttribute('x', this.width - offset);
+        handlerBR.setAttribute('x', widthWithPadding - offset);
         handlerBR.setAttribute('y', this.height + offset);
     
-        handlerB.setAttribute('x', this.width / 2  + offset - padding);
+        handlerB.setAttribute('x', widthWithPadding / 2  + offset - padding);
         handlerB.setAttribute('y', this.height + offset);
         
         handlerBL.setAttribute('x', - offset);
