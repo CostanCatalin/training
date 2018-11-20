@@ -123,16 +123,6 @@ let resizableMixin = (function initializeResizable(){
     }
 
     function mouseMoveHandler(e) {
-        if (resizing == ResizeTypeEnum.Left || resizing == ResizeTypeEnum.Right || resizing >= 5) {
-            let isLeft = resizing == ResizeTypeEnum.Left || resizing == ResizeTypeEnum.TopLeft || resizing == ResizeTypeEnum.BottomLeft;
-            let newWidth = isLeft ?  (self.coord.x + self.width) - e.pageX : e.pageX - self.coord.x;
-
-            if (newWidth < minWidth) newWidth = minWidth;
-            if (newWidth > maxWidth) newWidth = maxWidth;
-
-            delta.width = (newWidth - self.width);
-            delta.height = 0;
-        }
 
         if (resizing == ResizeTypeEnum.Top || resizing == ResizeTypeEnum.Bottom || resizing >= 5) {
             let isBottom = resizing == ResizeTypeEnum.Bottom || resizing == ResizeTypeEnum.BottomLeft || resizing == ResizeTypeEnum.BottomRight;
@@ -147,12 +137,33 @@ let resizableMixin = (function initializeResizable(){
             } 
         }
 
+        if (resizing == ResizeTypeEnum.Left || resizing == ResizeTypeEnum.Right || resizing >= 5) {
+            let isLeft = resizing == ResizeTypeEnum.Left || resizing == ResizeTypeEnum.TopLeft || resizing == ResizeTypeEnum.BottomLeft;
+            let newWidth = isLeft ?  (self.coord.x + self.width) - e.pageX : e.pageX - self.coord.x;
+
+            if (newWidth < minWidth) newWidth = minWidth;
+            if (newWidth > maxWidth) newWidth = maxWidth;
+
+            delta.width = (newWidth - self.width);
+            if (resizing < 5) {
+                delta.height = 0;
+            } 
+        }
+
+        // so that there's no weird shape
+        if (self.height + delta.height > self.width + delta.width) {
+            return;
+        }
+
         updateResizeHandlers(self);
         callback.call(self, delta, resizing);
     }
 
     function mouseUpHandler(e) {
-        callback.call(self, delta, resizing, true);
+        // if isn't an annomaly shape
+        if (self.height + delta.height <= self.width + delta.width) {
+            callback.call(self, delta, resizing, true);
+        }
         resizing = ResizeTypeEnum.None;
 
         document.body.removeEventListener("mousemove", mouseMoveHandler);

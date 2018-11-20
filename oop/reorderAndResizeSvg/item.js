@@ -30,14 +30,15 @@ let Item = (function initializeItem(){
         },
 
         redraw: function() {
-            let displayWidth = this.width - 2 * padding;
+            let roundingOffset = this.height / 2;
+            let displayWidth = this.width - padding - roundingOffset;
             this.element.querySelector('.item').setAttribute('d', 'M 0, 0' +
             ' L ' + displayWidth  + ' 0' + 
-            ' Q ' + (displayWidth + padding) + ' 0 ' + (displayWidth + padding) + ' ' + ( this.height / 2) +
-            ' Q ' + (displayWidth + padding) + ' ' + this.height + ' ' + displayWidth + ' ' + this.height +
-            ' L' + padding + ' ' + this.height + 
+            ' Q ' + (displayWidth + roundingOffset) + ' 0 ' + (displayWidth + roundingOffset) + ' ' + ( this.height / 2) +
+            ' Q ' + (displayWidth + roundingOffset) + ' ' + this.height + ' ' + displayWidth + ' ' + this.height +
+            ' L' + roundingOffset + ' ' + this.height + 
             ' Q 0 ' + this.height + ' 0 ' + ( this.height / 2)  +
-            ' Q 0 0 ' + padding + ' 0 z');
+            ' Q 0 0 ' + roundingOffset + ' 0 z');
         }
     });
 
@@ -78,7 +79,8 @@ let Item = (function initializeItem(){
     function clickHandler(e) {
         if (previouslyClicked != null && !e.target.classList.contains('handler') && previouslyClicked.nextSibling) {
             previouslyClicked.classList.remove('clicked');
-            previouslyClicked.parentNode.removeChild(previouslyClicked.parentNode.lastChild);
+            let prevBorder = previouslyClicked.parentNode.querySelector('.wrapper');
+            if (prevBorder) previouslyClicked.parentNode.removeChild(prevBorder);
         }
 
         if (!e.target.classList.contains('item') || document.querySelector('.item-wrapper.moving') != null) {
