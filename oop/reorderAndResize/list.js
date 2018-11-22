@@ -31,16 +31,16 @@ let List = (function initializeList() {
         getItemFromPoint: function(x, y) {
             let rect = document.querySelector('.list').getBoundingClientRect();
             let innerY = y - rect.top;
-
-            if (innerY < 0 || innerY > rect.bottom - rect.top){
+            let maxY = rect.bottom - rect.top + this.items[this.items.length - 1].height;
+            
+            if (innerY < 0 || innerY > maxY){
                 return;
             }
 
             let currentOffset = innerY;
             
             for (let i = 0; i < this.items.length; i++) {
-                let itemHeight = this.items[i].element.getBoundingClientRect().height + 20;
-                // console.log(itemHeight);
+                let itemHeight = this.items[i].height + itemSpacing;
                 currentOffset -= itemHeight;
 
                 if (currentOffset <= 0) {
@@ -64,10 +64,14 @@ let List = (function initializeList() {
             }
         }
 
-        let item = this.items[oldIdx];
-        this.items.splice(oldIdx, 1);
-        if (newIdx > oldIdx) newIdx--;
-        this.items.splice(newIdx, 0 , item);
+        if (e.data.atTheEnd) {
+            this.items.push(this.items.splice(oldIdx, 1)[0]);
+        } else {
+            if (newIdx > oldIdx) {
+                newIdx--;
+            }
+            this.items.splice(newIdx, 0 , this.items.splice(oldIdx, 1)[0]);
+        }
     }
 
     return List;

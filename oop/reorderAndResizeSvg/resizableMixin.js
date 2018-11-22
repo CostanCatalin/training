@@ -6,15 +6,27 @@ let resizableMixin = (function initializeResizable(){
     let topOffset;
     let resizing = ResizeTypeEnum.None;
     let self;
-    let callback;
 
+    let wrapper;
     let border, handlerT, handlerTR, handlerR, handlerBR, handlerB, handlerBL, handlerL, handlerTL;
+    let mouseDownHandlerWithContext;
 
     let resizableMixin = {
-        drawBorderWithHandlers(resizeFunction) {
+        drawBorderWithHandlers: function() {
             self = this;
-            callback = resizeFunction;
-            let = wrapper = document.createElementNS(svgNamespace, 'g');
+            if (mouseDownHandlerWithContext != null) {
+                wrapper.removeEventListener("mousedown", mouseDownHandlerWithContext);
+            }
+
+            mouseDownHandlerWithContext = mouseDownHandler.bind(self);
+
+            if (wrapper != null) {
+                wrapper.addEventListener("mousedown", mouseDownHandlerWithContext);
+                window.requestAnimationFrame(updateResizeHandlers.bind(this));
+                return wrapper;
+            }
+            
+            wrapper = document.createElementNS(svgNamespace, 'g');
             topOffset = document.querySelector('.list').getBoundingClientRect().top || 0;
             wrapper.classList.add('wrapper');
             wrapper.setAttribute('width', this.width);
@@ -50,12 +62,16 @@ let resizableMixin = (function initializeResizable(){
             handlerTL = document.createElementNS(svgNamespace, 'rect');
             handlerTL.classList.add('handler', 'handler-top-left');
 
-            wrapper.addEventListener("mousedown" , mouseDownHandler.bind(this));
+            wrapper.addEventListener("mousedown" , mouseDownHandlerWithContext);
             window.requestAnimationFrame(updateResizeHandlers.bind(this));
 
             wrapper.append(border, handlerT, handlerTR, handlerR, handlerB, handlerBL, handlerBR, handlerL, handlerTL)
             return wrapper;
         },
+
+        resize: function(){
+            throw new Error("Resize function not implemented");
+        }
     };
 
     
@@ -96,30 +112,33 @@ let resizableMixin = (function initializeResizable(){
             return;
         }
         if (e.target.classList.contains('handler-top')) {
-            resizing =  ResizeTypeEnum.Top;
+            resizing = ResizeTypeEnum.Top;
 
         } else if (e.target.classList.contains('handler-right')) {
-            resizing =  ResizeTypeEnum.Right;
+            resizing = ResizeTypeEnum.Right;
 
         } else if (e.target.classList.contains('handler-bottom')) {
-            resizing =  ResizeTypeEnum.Bottom;
+            resizing = ResizeTypeEnum.Bottom;
 
         } else if (e.target.classList.contains('handler-left')) {
-            resizing =  ResizeTypeEnum.Left;
+            resizing = ResizeTypeEnum.Left;
 
         } else if (e.target.classList.contains('handler-top-right')) {
-            resizing =  ResizeTypeEnum.TopRight;
+            resizing = ResizeTypeEnum.TopRight;
 
         } else if (e.target.classList.contains('handler-top-left')) {
-            resizing =  ResizeTypeEnum.TopLeft;
+            resizing = ResizeTypeEnum.TopLeft;
 
         } else if (e.target.classList.contains('handler-bottom-right')) {
-            resizing =  ResizeTypeEnum.BottomRight;
+            resizing = ResizeTypeEnum.BottomRight;
             
         } else if (e.target.classList.contains('handler-bottom-left')) {
-            resizing =  ResizeTypeEnum.BottomLeft;
+            resizing = ResizeTypeEnum.BottomLeft;
         }
         self = this;
+        delta.width = 0; 
+        delta.height = 0;
+
         document.body.addEventListener("mousemove", mouseMoveHandler);
         document.body.addEventListener("mouseup", mouseUpHandler);
     }
@@ -134,9 +153,6 @@ let resizableMixin = (function initializeResizable(){
             if (newHeight < minHeight) newHeight = minHeight;
             
             delta.height = newHeight - self.height;
-            if (resizing < 5) {
-                delta.width = 0;
-            } 
         }
 
         if (resizing == ResizeTypeEnum.Left || resizing == ResizeTypeEnum.Right || resizing >= 5) {
@@ -147,17 +163,14 @@ let resizableMixin = (function initializeResizable(){
             if (newWidth > maxWidth) newWidth = maxWidth;
 
             delta.width = (newWidth - self.width);
-            if (resizing < 5) {
-                delta.height = 0;
-            } 
         }
 
         window.requestAnimationFrame(updateResizeHandlers.bind(self));
-        callback.call(self, delta, resizing);
+        self.resize(delta, resizing);
     }
 
     function mouseUpHandler(e) {
-        callback.call(self, delta, resizing, true);
+        self.resize(delta, resizing, true);
         resizing = ResizeTypeEnum.None;
 
         document.body.removeEventListener("mousemove", mouseMoveHandler);

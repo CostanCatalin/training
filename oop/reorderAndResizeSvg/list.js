@@ -2,37 +2,36 @@ let List = (function initializeList() {
     function List(number) {
         this.number = number;
         this.items = [];
-        this.list = null;
+        this.listElement = null;
         this.initializeItems();
     }
 
     Object.assign(List.prototype, {
         initializeItems: function() {
             for (let i = 0; i < this.number; i++) {
-                let item = new Item(this, i * (itemHeight + itemSpacing) + itemSpacing );
+                let item = new Item(this, i * (itemHeight + itemSpacing) + itemSpacing, i+1 == this.number);
                 item.addListener("moved", itemMovedHandler.bind(this));
                 this.items.push(item);
             }
         },
 
         draw: function() {
-            if (this.list == null ) {
-                this.list = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                this.list.setAttribute('width', '100%');
-                this.list.setAttribute('height', '100%');
+            if (this.listElement == null ) {
+                this.listElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                this.listElement.setAttribute('width', '100%');
+                this.listElement.setAttribute('height', '100%');
+                this.listElement.classList.add('list');
+                
+                for (let i = 0; i < this.items.length; i++) {
+                    this.listElement.appendChild(this.items[i].element);
+                }  
+                document.body.appendChild(this.listElement);
+
+                return;
             }
 
-            this.list.classList.add('list');
-
-            for (let i = 0; i < this.number; i++) {
-                this.list.appendChild(this.items[i].element);    
-            }
-
-            document.body.appendChild(this.list);
-        },
-
-        redraw: function() {
             let currentY = 0;
+
             for (let i = 0; i < this.items.length; i++) {
                 let height = this.items[i].height;
 
@@ -42,11 +41,15 @@ let List = (function initializeList() {
                 currentY += height;
             }
         },
+
         getItemFromPoint: function(x, y) {
             let rect = document.querySelector('.list').getBoundingClientRect();
             let innerY = y - rect.top;
-
-            if (innerY < 0 || innerY > rect.bottom - rect.top){
+            
+            let lastItem = this.items[this.items.length - 1];
+            let maxY = lastItem.coord.y + lastItem.height + 2 * itemSpacing;
+            
+            if (innerY < 0 || innerY > maxY){
                 return;
             }
 
@@ -77,12 +80,16 @@ let List = (function initializeList() {
             }
         }
 
-        let item = this.items[oldIdx];
-        this.items.splice(oldIdx, 1);
-        if (newIdx > oldIdx) newIdx--;
+        if (e.data.atTheEnd) {
+            this.items.push(this.items.splice(oldIdx, 1)[0]);
+        } else {
+            if (newIdx > oldIdx) {
+                newIdx--;
+            }
+            this.items.splice(newIdx, 0 , this.items.splice(oldIdx, 1)[0]);
+        }
         
-        this.items.splice(newIdx, 0 , item);
-        window.requestAnimationFrame(this.redraw.bind(this));
+        window.requestAnimationFrame(this.draw.bind(this));
     }
 
     return List;

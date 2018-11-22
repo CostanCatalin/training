@@ -1,31 +1,36 @@
 let resizableMixin = (function initializeResizable(){
-    let ResizeTypeEnum = Object.freeze({
-        None: 0,
-        Top: 1,
-        Right: 2,
-        Bottom: 3,
-        Left: 4,
-        TopLeft: 5,
-        TopRight: 6,
-        BottomLeft: 7,
-        BottomRight: 8
-    });
-    const initialWidth = 500;
-    const minWidth = 10;
-    const maxWidth = 1500;
-    const minHeight = 30;
-    const maxHeight = 400;
-    const padding = 8;
-
     let resizing = ResizeTypeEnum.None;
-    let elem;
+    let delta = {
+        width: 0,
+        height: 0
+    };
+    let self;
+
+    let wrapper;
+    let mouseDownHandlerWithContext;
 
     let resizableMixin = {
-        drawBorderWithHandlers(element) {
-            let border = document.createElement('div');
-            border.classList.add('border');
-            border.style.width = element.getBoundingClientRect().width + 5 + "px";
-            border.style.height = element.getBoundingClientRect().height + 5 + "px";
+        drawBorderWithHandlers() {
+            self = this;
+            let justCreated = false;
+            if (mouseDownHandlerWithContext != null) {
+                wrapper.removeEventListener("mousedown", mouseDownHandlerWithContext);
+            }
+            if (wrapper == null) {
+                wrapper = document.createElement('div');
+                wrapper.classList.add('border');
+                justCreated = true;
+            }
+            
+            wrapper.style.width = this.width + padding / 2 + "px";
+            wrapper.style.height = this.height + padding / 2 + "px";
+
+            mouseDownHandlerWithContext = mouseDownHandler.bind(self);
+
+            if (wrapper != null && !justCreated) {
+                wrapper.addEventListener("mousedown", mouseDownHandlerWithContext);
+                return wrapper;
+            }
 
             let handlerT = document.createElement('div');
             handlerT.classList.add('handler', 'handler-top');
@@ -59,20 +64,10 @@ let resizableMixin = (function initializeResizable(){
             handlerTL.classList.add('handler', 'handler-top-left');
             handlerTL.append(document.createElement('div'));
 
-            handlerT.addEventListener("mousedown" , mouseDownHandler);
-            handlerB.addEventListener("mousedown" , mouseDownHandler);
+            wrapper.addEventListener("mousedown" , mouseDownHandlerWithContext);
 
-            handlerL.addEventListener("mousedown" , mouseDownHandler);
-            handlerR.addEventListener("mousedown" , mouseDownHandler);
-
-            handlerTR.addEventListener("mousedown" , mouseDownHandler);
-            handlerBR.addEventListener("mousedown" , mouseDownHandler);
-
-            handlerTL.addEventListener("mousedown" , mouseDownHandler);
-            handlerBL.addEventListener("mousedown" , mouseDownHandler);
-
-            border.append(handlerT, handlerTR, handlerR, handlerBR, handlerB, handlerBL, handlerL, handlerTL)
-            element.append(border);
+            wrapper.append(handlerT, handlerTR, handlerR, handlerBR, handlerB, handlerBL, handlerL, handlerTL)
+            return wrapper;
         }
     };
     
@@ -101,52 +96,52 @@ let resizableMixin = (function initializeResizable(){
         } else if (e.target.classList.contains('handler-bottom-left')) {
             resizing =  ResizeTypeEnum.BottomLeft;
         }
-        elem = e.target.closest('.item');
+        self = this;
+        delta.width = 0; 
+        delta.height = 0;
+
         document.body.addEventListener("mousemove", mouseMoveHandler);
         document.body.addEventListener("mouseup", mouseUpHandler);
     }
 
     function mouseMoveHandler(e) {
-        let rect = elem.getBoundingClientRect();
-        
-        let left = parseInt(elem.style.left.replace("px", '')) || 0;
-        let border = elem.querySelector('.border');
+        let rect = self.element.querySelector('.item').getBoundingClientRect();
 
         if (resizing == ResizeTypeEnum.Left || resizing == ResizeTypeEnum.Right || resizing >= 5) {
             let isLeft = resizing == ResizeTypeEnum.Left || resizing == ResizeTypeEnum.TopLeft || resizing == ResizeTypeEnum.BottomLeft;
-            let prevWidth = parseInt(elem.style.width.replace('px', '')) || initialWidth;
-            let newWidth = isLeft ? rect.right - e.pageX : e.pageX - rect.left;
+            let newWidth = isLeft ? rect.right - e.pageX : e.pageX - self.left;
 
-            if (newWidth < minWidth) newWidth = minWidth;
-            if (newWidth > maxWidth) newWidth = maxWidth;
-
-            elem.style.width = newWidth + "px";
-            border.style.width = newWidth + padding/2 + "px";
-            
-            if (isLeft) {
-                elem.style.left = left - (newWidth - prevWidth) + "px";
+            if (newWidth < minWidth) {
+                newWidth = minWidth;
             }
+            if (newWidth > maxWidth) {
+                newWidth = maxWidth;
+            }
+
+            delta.width = newWidth - self.width;
         }
 
         if (resizing == ResizeTypeEnum.Top || resizing == ResizeTypeEnum.Bottom || resizing >= 5) {
             let isBottom = resizing == ResizeTypeEnum.Bottom || resizing == ResizeTypeEnum.BottomLeft || resizing == ResizeTypeEnum.BottomRight;
-            let height = !isBottom ? rect.bottom - e.pageY : e.pageY - rect.top;
+            let newHeight = !isBottom ? rect.bottom - e.pageY : e.pageY - rect.top;
 
-            if (height > maxHeight) height = maxHeight;
-            if (height < minHeight) height = minHeight;
-            
-            border.style.height = height + padding + "px";
-
-            if (resizing == ResizeTypeEnum.Bottom || resizing == ResizeTypeEnum.BottomLeft || resizing == ResizeTypeEnum.BottomRight) {
-                elem.style.height = height + padding / 2+ "px";
+            if (newHeight > maxHeight) {
+                newHeight = maxHeight;
             }
+            if (newHeight < minHeight) {
+                newHeight = minHeight;
+            }
+
+            delta.height = newHeight - self.height;
+        }
+
+        if (delta.height != 0 || delta.width != 0) {
+            self.resize(delta, resizing);
         }
     }
 
     function mouseUpHandler(e) {
-        if (resizing == ResizeTypeEnum.Top || resizing == ResizeTypeEnum.TopLeft || resizing == ResizeTypeEnum.TopRight) {
-            elem.style.height = elem.querySelector('.border').style.height.replace("px", '') - padding / 2 + "px";
-        }
+        self.resize(delta, resizing, true);
         resizing = ResizeTypeEnum.None;
 
         document.body.removeEventListener("mousemove", mouseMoveHandler);

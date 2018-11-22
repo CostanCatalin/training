@@ -26,7 +26,12 @@ let Item = (function initializeItem(){
         updateCoord: function(x, y) {
             this.coord.x = x || this.coord.x;
             this.coord.y = y || this.coord.y;
-            this.element.setAttribute('transform', 'translate(' + this.coord.x + ',' + this.coord.y + ')')
+            this.element.setAttribute('transform', 'translate(' + this.coord.x + ',' + this.coord.y + ')');
+            
+            // move element to the bottom of the list to overlap on resize
+            if(this.element != this.element.parentNode.lastChild) {
+                this.element.parentNode.append(this.element);
+            }
         },
 
         redraw: function(elem) {
@@ -36,7 +41,9 @@ let Item = (function initializeItem(){
             
             let displayWidth = this.width;
             let roundingOffset = this.height / 2;
-            if (roundingOffset > displayWidth / 2) roundingOffset = displayWidth / 2;
+            if (roundingOffset > displayWidth / 2) {
+                roundingOffset = displayWidth / 2;
+            }
             displayWidth -= roundingOffset;
             elem.setAttribute('d', 'M 0, 0' +
             ' L ' + displayWidth  + ' 0' + 
@@ -45,6 +52,30 @@ let Item = (function initializeItem(){
             ' L' + roundingOffset + ' ' + this.height + 
             ' Q 0 ' + this.height + ' 0 ' + ( this.height / 2)  +
             ' Q 0 0 ' + roundingOffset + ' 0 z');
+        },
+
+        resize: function(delta, resizeType, isFinished) {
+            let isTop = resizeType == ResizeTypeEnum.Top || resizeType == ResizeTypeEnum.TopLeft || resizeType == ResizeTypeEnum.TopRight;
+            let modifiesHeight = resizeType != ResizeTypeEnum.Left && resizeType != ResizeTypeEnum.Right;
+            let isLeft = resizeType == ResizeTypeEnum.Left || resizeType == ResizeTypeEnum.TopLeft || resizeType == ResizeTypeEnum.BottomLeft;
+            this.width += delta.width;
+            this.height += delta.height;
+    
+            if (isLeft) {
+                this.coord.x -= delta.width;
+            }
+    
+            if (isTop) {
+                this.coord.y -= delta.height;
+            }
+            
+            window.requestAnimationFrame(this.redraw.bind(this));
+            this.updateCoord();
+    
+            if (!modifiesHeight || isFinished) {
+                this.parentList.draw();
+                window.requestAnimationFrame(this.parentList.draw.bind(this.parentList));
+            }
         }
     });
 
@@ -58,18 +89,28 @@ let Item = (function initializeItem(){
         self.redraw(elem);
 
         elem.classList.add('item');
-        if (customClass != undefined) elem.classList.add(customClass);
+        if (customClass != undefined) {
+            elem.classList.add(customClass);
+        }
 
-        let indicator = document.createElementNS(svgNamespace, 'line');
-        indicator.classList.add('indicator');
-        indicator.setAttribute('x1', '-100%');
-        indicator.setAttribute('y1', -5);
-        indicator.setAttribute('x2', '100%');
-        indicator.setAttribute('y2', -5);
-        indicator.setAttribute('stroke-width', 2);
+        let indicatorTop = document.createElementNS(svgNamespace, 'line');
+        indicatorTop.classList.add('indicator');
+        indicatorTop.setAttribute('x1', '-100%');
+        indicatorTop.setAttribute('y1', -padding);
+        indicatorTop.setAttribute('x2', '100%');
+        indicatorTop.setAttribute('y2', -padding);
+        indicatorTop.setAttribute('stroke-width', 2);
 
-        wrapper.append(elem, indicator);
+        let indicatorBottom = document.createElementNS(svgNamespace, 'line');
+        indicatorBottom.classList.add('indicator-bottom');
+        indicatorBottom.setAttribute('x1', '-100%');
+        indicatorBottom.setAttribute('y1', self.height + padding);
+        indicatorBottom.setAttribute('x2', '100%');
+        indicatorBottom.setAttribute('y2', self.height + padding);
+        indicatorBottom.setAttribute('stroke-width', 2);
+        
         wrapper.setAttribute('item-id', self.id);
+        wrapper.append(elem, indicatorTop, indicatorBottom);
         elem.addEventListener("mousedown", self.clickHandlerWithContext);
         return wrapper;
     }
@@ -78,7 +119,9 @@ let Item = (function initializeItem(){
         if (previouslyClicked != null && !e.target.classList.contains('handler') && previouslyClicked.nextSibling) {
             previouslyClicked.classList.remove('clicked');
             let prevBorder = previouslyClicked.parentNode.querySelector('.wrapper');
-            if (prevBorder) previouslyClicked.parentNode.removeChild(prevBorder);
+            if (prevBorder) {
+                previouslyClicked.parentNode.removeChild(prevBorder);
+            }
         }
 
         if (!e.target.classList.contains('item') || document.querySelector('.item-wrapper.moving') != null) {
@@ -87,32 +130,9 @@ let Item = (function initializeItem(){
 
         e.target.classList.add('clicked');
         if (this instanceof Item) {
-            this.element.append(this.drawBorderWithHandlers(resizeFunction));
+            this.element.append(this.drawBorderWithHandlers());
         }
         previouslyClicked = e.target;
-    }
-
-    function resizeFunction(delta, resizeType, isFinished) {
-        let isTop = resizeType == ResizeTypeEnum.Top || resizeType == ResizeTypeEnum.TopLeft || resizeType == ResizeTypeEnum.TopRight;
-        let isLeft = resizeType == ResizeTypeEnum.Left || resizeType == ResizeTypeEnum.TopLeft || resizeType == ResizeTypeEnum.BottomLeft;
-        this.width += delta.width;
-        this.height += delta.height;
-
-        if (isLeft) {
-            this.coord.x -= delta.width;
-        }
-
-        if (isTop) {
-            this.coord.y -= delta.height;
-        }
-        
-        window.requestAnimationFrame(this.redraw.bind(this));
-        this.updateCoord();
-
-        if (!isTop || isFinished) {
-            this.parentList.redraw();
-            window.requestAnimationFrame(this.parentList.redraw.bind(this.parentList));
-        }
     }
 
     return Item;

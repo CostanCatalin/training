@@ -67,7 +67,14 @@ let Draggable = (function draggableInitializer() {
 
         // new position + indicator 
         let currentItem = this.parentList.getItemFromPoint(e.pageX, e.pageY);
-        if (currentItem == null) return;
+        if (currentItem == null) {
+            if (hovered != null) {
+                hovered.classList.remove('hovered');
+                hovered.classList.remove('hovered-bellow');
+                hovered = null;
+            }
+            return;
+        }
         currentItem = currentItem.element;
 
         if (!currentItem.classList.contains('item') && !currentItem.classList.contains('item-wrapper')) {
@@ -80,6 +87,7 @@ let Draggable = (function draggableInitializer() {
 
         if (hovered != null) {
             hovered.classList.remove('hovered');
+            hovered.classList.remove('hovered-bellow');
         }
 
         let rect = currentItem.getBoundingClientRect();
@@ -98,6 +106,10 @@ let Draggable = (function draggableInitializer() {
 
         if (hovered != null) {
             hovered.classList.add('hovered');
+        } else {
+            // bellow
+            hovered = currentItem;
+            hovered.classList.add('hovered-bellow');
         }
     }
 
@@ -110,14 +122,23 @@ let Draggable = (function draggableInitializer() {
         }
         
         if (hovered != null) {
+            let atTheEnd = hovered.classList.contains('hovered-bellow');
             hovered.classList.remove('hovered');
+            hovered.classList.remove('hovered-bellow');
             this.element.parentNode.insertBefore(this.element, hovered);
+
+            if (atTheEnd) {
+                this.element.parentNode.insertBefore(this.element, hovered.nextSibling);
+            } else {
+                this.element.parentNode.insertBefore(this.element, hovered);
+            }
 
             this.fire({
                 type:"moved",
                 data: {
                     id: this.id,
-                    before: hovered.getAttribute('item-id')
+                    before: hovered.getAttribute('item-id'),
+                    atTheEnd: atTheEnd
                 }
             });
             
@@ -133,8 +154,10 @@ let Draggable = (function draggableInitializer() {
         if (!hasParentWithClass(e.target, 'item-wrapper')) {
             let clicked = document.querySelector('.item.clicked');
 
-            if (clicked == null) return;
-
+            if (clicked == null) {
+                return;
+            }
+            
             clicked.classList.remove('clicked');
             clicked.parentNode.removeChild(clicked.parentNode.lastChild);
         }

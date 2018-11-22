@@ -58,6 +58,10 @@ h1 {
     stroke: #d24726;
 }
 
+.item-wrapper.hovered-bellow .indicator-bottom{
+    stroke: #d24726;
+}
+
 .handler {
     width: 10px;
     height: 10px;
