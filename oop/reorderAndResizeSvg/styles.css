@@ -47,6 +47,16 @@ h1 {
     display: none;
 }
 
+.wrapper {
+    position: absolute;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.wrapper .border {
+    pointer-events: none;
+}
+
 .item-wrapper.moving {
     user-select: none;
 }
@@ -66,6 +76,7 @@ h1 {
     width: 10px;
     height: 10px;
     fill: white;
+    pointer-events: all;
 }
 
 .handler-top,

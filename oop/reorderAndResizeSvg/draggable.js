@@ -1,14 +1,7 @@
-let DragAxisEnum = Object.freeze({
-    Both: 0,
-    onlyX: 1,
-    onlyY: 2
-});
-
 let Draggable = (function draggableInitializer() {
     let movingElement = null;
     let hovered = null;
-    const padding = 8;
-    const svgNamespace = 'http://www.w3.org/2000/svg';
+    let innerTopOffset = 0;
 
     function Draggable(element, axis = DragAxisEnum.Both) {
         this.element = element;
@@ -34,6 +27,11 @@ let Draggable = (function draggableInitializer() {
         if (!e.target.classList.contains('item') || e.target.classList.contains('hidden') || movingElement != null) {
             return;
         }
+        
+        const topOffset = document.querySelector('.list') == null ? 0 : document.querySelector('.list').getBoundingClientRect().top;
+        this.moving = true;
+        innerTopOffset = e.pageY - this.coord.y - topOffset;
+        innerLeftOffset = e.pageX - this.coord.x;
 
         document.body.addEventListener("mousemove", this.mouseMoveHandlerWithContext);
         document.body.addEventListener("mouseup", this.mouseUpHandlerWithContext);
@@ -43,26 +41,33 @@ let Draggable = (function draggableInitializer() {
     function mouseMoveHandler(e) {
         if (movingElement == null) {
             let elem = this.element.cloneNode(true);
-            elem.setAttribute('transform', 'translate(' + this.coord.x + ', 10)');
+            elem.setAttribute('transform', `translate(${this.coord.x}, 10)`);
 
             movingElement = document.createElementNS(svgNamespace, "svg");
-            movingElement.appendChild(elem);
             movingElement.classList.add('moving');
-            movingElement.setAttribute('width', '100%');
-            movingElement.setAttribute('height', this.height + 3*padding);
+            movingElement.setAttribute('width', this.width);
+            movingElement.setAttribute('height', this.height + 3 * padding);
+            movingElement.style.left = this.coord.x + "px";
             
             this.element.parentNode.classList.add('moving');
             this.element.classList.add('hidden');
             
+            movingElement.appendChild(elem);
+            movingElement.querySelector('.item-wrapper').setAttribute('transform', '');
             document.body.appendChild(movingElement);
         }
 
         // moving item display
         if (this.axis == DragAxisEnum.onlyX || this.axis == DragAxisEnum.Both) {
+            let left =  e.pageX - (this.width / 2);
             movingElement.style.left = e.pageX - (this.width / 2) + "px";
+
+            repositionBorder(null, left);
         }
         if (this.axis == DragAxisEnum.onlyY || this.axis == DragAxisEnum.Both) {
-            movingElement.style.top = e.pageY - (this.height / 2)  + "px";
+            let top = e.pageY - innerTopOffset;
+            movingElement.style.top = top + "px";
+            repositionBorder(top);
         }
 
         // new position + indicator 
@@ -101,7 +106,7 @@ let Draggable = (function draggableInitializer() {
         }
 
         if (hovered != null && hovered.classList.contains('hidden')) {
-            hovered = hovered.nextSibling;
+            return;
         }
 
         if (hovered != null) {
@@ -114,6 +119,10 @@ let Draggable = (function draggableInitializer() {
     }
 
     function mouseUpHandler(e) {
+        this.moving = false;
+        innerTopOffset = 0;
+        innerLeftOffset = 0;
+
         this.element.classList.remove('hidden');
         this.element.parentNode.classList.remove('moving');
         if (movingElement != null) {
@@ -125,7 +134,6 @@ let Draggable = (function draggableInitializer() {
             let atTheEnd = hovered.classList.contains('hovered-bellow');
             hovered.classList.remove('hovered');
             hovered.classList.remove('hovered-bellow');
-            this.element.parentNode.insertBefore(this.element, hovered);
 
             if (atTheEnd) {
                 this.element.parentNode.insertBefore(this.element, hovered.nextSibling);
@@ -143,6 +151,8 @@ let Draggable = (function draggableInitializer() {
             });
             
             hovered = null;
+        } else {
+            this.drawBorderWithHandlers();
         }
         
         document.body.removeEventListener("mousemove", this.mouseMoveHandlerWithContext);
@@ -151,20 +161,39 @@ let Draggable = (function draggableInitializer() {
     }
 
     function deselectClicked(e) {
-        if (!hasParentWithClass(e.target, 'item-wrapper')) {
-            let clicked = document.querySelector('.item.clicked');
+        if (!hasParentWithClass(e.target, 'list') && !hasParentWithClass(e.target, 'wrapper')) {
+            let clicked = document.querySelector('.clicked');
 
             if (clicked == null) {
                 return;
             }
             
             clicked.classList.remove('clicked');
-            clicked.parentNode.removeChild(clicked.parentNode.lastChild);
+            let border = document.querySelector('.wrapper');
+            border.style.left = "-1000px";
+            border.style.top = "-1000px";
+            border.style.display = "none";
         }
     }
 
-    function hasParentWithClass(c, cls){ //returns boolean
-        while(c=c.parentNode) {
+    function repositionBorder(top, left) {
+        let border = document.querySelector('.wrapper');
+
+        if (!border) {
+            return;
+        }
+
+        if (top) {
+            border.style.top = top - padding + "px";
+        }
+
+        if (left) {
+            border.style.left = left - padding + "px";
+        }
+    }
+
+    function hasParentWithClass(c, cls){
+        while(c = c.parentNode) {
             if (c == document || c == document.body) {
                 return false;
             }

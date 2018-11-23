@@ -1,3 +1,10 @@
+// -- Draggable
+let DragAxisEnum = Object.freeze({
+    Both: 0,
+    onlyX: 1,
+    onlyY: 2
+});
+
 // -- List
 const itemHeight = 30;
 const itemSpacing = 15;

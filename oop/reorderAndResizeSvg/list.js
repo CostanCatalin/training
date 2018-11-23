@@ -26,7 +26,6 @@ let List = (function initializeList() {
                     this.listElement.appendChild(this.items[i].element);
                 }  
                 document.body.appendChild(this.listElement);
-
                 return;
             }
 
@@ -43,13 +42,15 @@ let List = (function initializeList() {
         },
 
         getItemFromPoint: function(x, y) {
+            let movingItemIdx = -1;
             let rect = document.querySelector('.list').getBoundingClientRect();
             let innerY = y - rect.top;
             
             let lastItem = this.items[this.items.length - 1];
+            let minY = -2 * itemSpacing;
             let maxY = lastItem.coord.y + lastItem.height + 2 * itemSpacing;
             
-            if (innerY < 0 || innerY > maxY){
+            if ( minY > innerY || innerY > maxY) {
                 return;
             }
 
@@ -59,7 +60,15 @@ let List = (function initializeList() {
                 let itemHeight = this.items[i].height + itemSpacing;
                 currentOffset -= itemHeight;
 
+                if (this.items[i].moving) {
+                    movingItemIdx = i;
+                }
+
                 if (currentOffset <= 0) {
+                    if ((movingItemIdx == i || movingItemIdx == i - 1) && movingItemIdx != -1) {
+                        return;
+                    }
+
                     return this.items[i];
                 }
             }

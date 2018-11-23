@@ -19,18 +19,21 @@ let Item = (function initializeItem(){
 
     Item.prototype = Object.create(Draggable.prototype);
     Item.prototype.constructor = Item;
-
-    Object.assign(Item.prototype, resizableMixin);
+    Object.assign(Item.prototype, Resizable.prototype);
 
     Object.assign(Item.prototype, {
         updateCoord: function(x, y) {
             this.coord.x = x || this.coord.x;
             this.coord.y = y || this.coord.y;
-            this.element.setAttribute('transform', 'translate(' + this.coord.x + ',' + this.coord.y + ')');
+            this.element.setAttribute('transform', `translate(${this.coord.x}, ${this.coord.y})`);
             
             // move element to the bottom of the list to overlap on resize
             if(this.element != this.element.parentNode.lastChild) {
                 this.element.parentNode.append(this.element);
+            }
+
+            if (this.element.classList.contains('clicked')) {
+                this.drawBorderWithHandlers();
             }
         },
 
@@ -45,13 +48,13 @@ let Item = (function initializeItem(){
                 roundingOffset = displayWidth / 2;
             }
             displayWidth -= roundingOffset;
-            elem.setAttribute('d', 'M 0, 0' +
-            ' L ' + displayWidth  + ' 0' + 
-            ' Q ' + (displayWidth + roundingOffset) + ' 0 ' + (displayWidth + roundingOffset) + ' ' + ( this.height / 2) +
-            ' Q ' + (displayWidth + roundingOffset) + ' ' + this.height + ' ' + displayWidth + ' ' + this.height +
-            ' L' + roundingOffset + ' ' + this.height + 
-            ' Q 0 ' + this.height + ' 0 ' + ( this.height / 2)  +
-            ' Q 0 0 ' + roundingOffset + ' 0 z');
+            elem.setAttribute('d', `M 0, 0
+            L ${displayWidth} 0 
+            Q ${displayWidth + roundingOffset} 0  ${displayWidth + roundingOffset}  ${this.height / 2}
+            Q ${displayWidth + roundingOffset} ${this.height} ${displayWidth} ${this.height} 
+            L ${roundingOffset} ${this.height}
+            Q 0 ${this.height} 0 ${this.height / 2}
+            Q 0 0 ${roundingOffset} 0 z`);
         },
 
         resize: function(delta, resizeType, isFinished) {
@@ -73,23 +76,23 @@ let Item = (function initializeItem(){
             this.updateCoord();
     
             if (!modifiesHeight || isFinished) {
-                this.parentList.draw();
                 window.requestAnimationFrame(this.parentList.draw.bind(this.parentList));
             }
+            window.requestAnimationFrame(this.drawBorderWithHandlers.bind(this));
         }
     });
 
     function createElement(customClass, self) {
         let wrapper = document.createElementNS(svgNamespace, 'g');
         wrapper.classList.add('item-wrapper');
-        wrapper.setAttribute('transform', 'translate(' + self.coord.x + ',' + self.coord.y + ')');
+        wrapper.setAttribute('transform', `translate(${self.coord.x}, ${self.coord.y})`);
         
         let elem = document.createElementNS(svgNamespace, 'path');
 
         self.redraw(elem);
 
         elem.classList.add('item');
-        if (customClass != undefined) {
+        if (customClass) {
             elem.classList.add(customClass);
         }
 
@@ -118,21 +121,15 @@ let Item = (function initializeItem(){
     function clickHandler(e) {
         if (previouslyClicked != null && !e.target.classList.contains('handler') && previouslyClicked.nextSibling) {
             previouslyClicked.classList.remove('clicked');
-            let prevBorder = previouslyClicked.parentNode.querySelector('.wrapper');
-            if (prevBorder) {
-                previouslyClicked.parentNode.removeChild(prevBorder);
-            }
         }
 
         if (!e.target.classList.contains('item') || document.querySelector('.item-wrapper.moving') != null) {
             return;
         }
 
-        e.target.classList.add('clicked');
-        if (this instanceof Item) {
-            this.element.append(this.drawBorderWithHandlers());
-        }
-        previouslyClicked = e.target;
+        e.target.parentNode.classList.add('clicked');
+        window.requestAnimationFrame(this.drawBorderWithHandlers.bind(this));
+        previouslyClicked = e.target.parentNode;
     }
 
     return Item;
