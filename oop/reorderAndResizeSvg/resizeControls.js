@@ -159,6 +159,11 @@ let ResizeControls = (function initializeResizeControls() {
     };
 
     function mouseMoveHandler(e) {
+        // 20px from page margin
+        if ( e.pageX < pageMargin || e.pageX > window.innerWidth - pageMargin) {
+            return;
+        }
+        
         if (resizing == ResizeTypeEnum.Top || resizing == ResizeTypeEnum.Bottom || resizing >= 5) {
             let isBottom = resizing == ResizeTypeEnum.Bottom || resizing == ResizeTypeEnum.BottomLeft || resizing == ResizeTypeEnum.BottomRight;
             let newHeight = !isBottom ? (self.coord.y + self.height) - e.pageY + topOffset : e.pageY - self.coord.y -  topOffset;

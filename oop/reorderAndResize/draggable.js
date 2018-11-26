@@ -1,14 +1,8 @@
-let DragAxisEnum = Object.freeze({
-    Both: 0,
-    onlyX: 1,
-    onlyY: 2
-});
-
 let Draggable = (function draggableInitializer() {
     let movingElement = null;
     let hovered = null;
-    const padding = 8;
-    const svgNamespace = 'http://www.w3.org/2000/svg';
+    let innerTopOffset = 0;
+    let innerLeftOffset = 0;
 
     function Draggable(element, axis = DragAxisEnum.Both) {
         this.element = element;
@@ -22,7 +16,7 @@ let Draggable = (function draggableInitializer() {
         document.body.addEventListener("mousedown", deselectClicked);
 
         this.element.addEventListener("mousedown", this.mouseDownHandlerWithContext);
-        this.element.addEventListener("mouseenter", this.mouseDownHandlerWithContext);
+        // this.element.addEventListener("mouseenter", this.mouseDownHandlerWithContext);
 
         Event.call(this);
     }
@@ -32,8 +26,14 @@ let Draggable = (function draggableInitializer() {
 
     function mouseDownHandler(e) {
         if (!e.target.classList.contains('item') || e.target.classList.contains('hidden') || movingElement != null) {
+            this.hideBorder();
             return;
         }
+
+        // const topOffset = document.querySelector('.list') == null ? 0 : document.querySelector('.list').getBoundingClientRect().top;
+        this.moving = true;
+        innerTopOffset = e.pageY - this.element.getBoundingClientRect().top;
+        innerLeftOffset = e.pageX - this.left;
 
         document.body.addEventListener("mousemove", this.mouseMoveHandlerWithContext);
         document.body.addEventListener("mouseup", this.mouseUpHandlerWithContext);
@@ -46,9 +46,8 @@ let Draggable = (function draggableInitializer() {
             movingElement.style.position = 'absolute';
             movingElement.classList.add('moving');
 
-            let rect = this.element.getBoundingClientRect();
-            movingElement.style.width = rect.width;
-            movingElement.style.left = rect.left;
+            movingElement.style.width = this.width;
+            movingElement.style.height = this.height;
             
             this.element.parentNode.classList.add('moving');
             this.element.classList.add('hidden');
@@ -58,10 +57,16 @@ let Draggable = (function draggableInitializer() {
 
         // moving item display
         if (this.axis == DragAxisEnum.onlyX || this.axis == DragAxisEnum.Both) {
-            movingElement.style.left = e.pageX - 300 + "px";
+            let left =  e.pageX - innerLeftOffset;
+            movingElement.style.left = left + "px";
+
+            repositionBorder(null, left);
         }
         if (this.axis == DragAxisEnum.onlyY || this.axis == DragAxisEnum.Both) {
-            movingElement.style.top = e.pageY - 30  + "px";
+            let top = e.pageY - innerTopOffset;
+            movingElement.style.top = top - 15 + "px";
+
+            repositionBorder(top);
         }
 
         // new position + indicator 
@@ -140,8 +145,11 @@ let Draggable = (function draggableInitializer() {
                     atTheEnd: atTheEnd
                 }
             });
-            
+
+            window.requestAnimationFrame(this.drawBorderWithHandlers.bind(this));
             hovered = null;
+        } else {
+            this.drawBorderWithHandlers();
         }
         
         document.body.removeEventListener("mousemove", this.mouseMoveHandlerWithContext);
@@ -159,6 +167,22 @@ let Draggable = (function draggableInitializer() {
             
             clicked.classList.remove('clicked');
             clicked.innerHTML = '';
+        }
+    }
+
+    function repositionBorder(top, left) {
+        let border = document.querySelector('.border');
+
+        if (!border) {
+            return;
+        }
+
+        if (top) {
+            border.style.top = top - padding / 2 + "px";
+        }
+
+        if (left) {
+            border.style.left = left - padding + "px";
         }
     }
 

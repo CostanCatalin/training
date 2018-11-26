@@ -1,3 +1,10 @@
+// -- Draggable
+let DragAxisEnum = Object.freeze({
+    Both: 0,
+    onlyX: 1,
+    onlyY: 2
+});
+
 // -- List
 const itemHeight = 30;
 const itemSpacing = 15;
@@ -16,6 +23,7 @@ const maxWidth = 1500;
 const minHeight = 10;
 const maxHeight = 400;
 const strokeColor = '#d24726';
+const pageMargin = 20;
 
 const ResizeTypeEnum = Object.freeze({
     None: 0,

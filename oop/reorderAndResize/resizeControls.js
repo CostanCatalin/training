@@ -1,4 +1,4 @@
-let resizableMixin = (function initializeResizable(){
+let ResizeControls = (function initializeResizeControls(){
     let resizing = ResizeTypeEnum.None;
     let delta = {
         width: 0,
@@ -8,22 +8,26 @@ let resizableMixin = (function initializeResizable(){
 
     let wrapper;
     let mouseDownHandlerWithContext;
+    
+    function ResizeControls() {
+    };
 
-    let resizableMixin = {
+    Object.assign(ResizeControls.prototype, {
         drawBorderWithHandlers() {
             self = this;
             let justCreated = false;
-            if (mouseDownHandlerWithContext != null) {
-                wrapper.removeEventListener("mousedown", mouseDownHandlerWithContext);
-            }
+
             if (wrapper == null) {
                 wrapper = document.createElement('div');
                 wrapper.classList.add('border');
                 justCreated = true;
             }
             
+            wrapper.style.display = 'initial';
             wrapper.style.width = this.width + padding / 2 + "px";
             wrapper.style.height = this.height + padding / 2 + "px";
+            wrapper.style.left = this.left - padding / 2 + "px";
+            wrapper.style.top = this.element.getBoundingClientRect().top - padding / 2 + "px";
 
             mouseDownHandlerWithContext = mouseDownHandler.bind(self);
 
@@ -64,37 +68,55 @@ let resizableMixin = (function initializeResizable(){
             handlerTL.classList.add('handler', 'handler-top-left');
             handlerTL.append(document.createElement('div'));
 
-            wrapper.addEventListener("mousedown" , mouseDownHandlerWithContext);
+            wrapper.addEventListener("mousedown", mouseDownHandlerWithContext);
 
             wrapper.append(handlerT, handlerTR, handlerR, handlerBR, handlerB, handlerBL, handlerL, handlerTL)
-            return wrapper;
+            document.body.append(wrapper);
+        },
+
+        hideBorder: function() {
+            if (wrapper == null) {
+                return;
+            }
+            
+            wrapper.style.top = "-1000px";
+            wrapper.style.left = "-1000px";
+            wrapper.style.display = 'none';
+        },
+
+        resize: function(){
+            throw new Error("Resize function not implemented");
         }
-    };
+    });
     
     function mouseDownHandler(e) {
         if (e.target.classList.contains('handler-top')) {
-            resizing =  ResizeTypeEnum.Top;
+            resizing = ResizeTypeEnum.Top;
 
         } else if (e.target.classList.contains('handler-right')) {
-            resizing =  ResizeTypeEnum.Right;
+            resizing = ResizeTypeEnum.Right;
 
         } else if (e.target.classList.contains('handler-bottom')) {
-            resizing =  ResizeTypeEnum.Bottom;
+            resizing = ResizeTypeEnum.Bottom;
 
         } else if (e.target.classList.contains('handler-left')) {
-            resizing =  ResizeTypeEnum.Left;
+            resizing = ResizeTypeEnum.Left;
 
         } else if (e.target.classList.contains('handler-top-right')) {
-            resizing =  ResizeTypeEnum.TopRight;
+            resizing = ResizeTypeEnum.TopRight;
 
         } else if (e.target.classList.contains('handler-top-left')) {
-            resizing =  ResizeTypeEnum.TopLeft;
+            resizing = ResizeTypeEnum.TopLeft;
 
         } else if (e.target.classList.contains('handler-bottom-right')) {
-            resizing =  ResizeTypeEnum.BottomRight;
+            resizing = ResizeTypeEnum.BottomRight;
             
         } else if (e.target.classList.contains('handler-bottom-left')) {
-            resizing =  ResizeTypeEnum.BottomLeft;
+            resizing = ResizeTypeEnum.BottomLeft;
+        }
+
+        if (resizing == ResizeTypeEnum.None) {
+            return;
         }
         self = this;
         delta.width = 0; 
@@ -102,10 +124,16 @@ let resizableMixin = (function initializeResizable(){
 
         document.body.addEventListener("mousemove", mouseMoveHandler);
         document.body.addEventListener("mouseup", mouseUpHandler);
+        document.body.addEventListener("mouseleave", mouseUpHandler);
     }
 
     function mouseMoveHandler(e) {
-        let rect = self.element.querySelector('.item').getBoundingClientRect();
+        // 20px from page margin
+        if ( e.pageX < pageMargin || e.pageX > window.innerWidth - pageMargin) {
+            return;
+        }
+
+        let rect = document.querySelector('.border').getBoundingClientRect();
 
         if (resizing == ResizeTypeEnum.Left || resizing == ResizeTypeEnum.Right || resizing >= 5) {
             let isLeft = resizing == ResizeTypeEnum.Left || resizing == ResizeTypeEnum.TopLeft || resizing == ResizeTypeEnum.BottomLeft;
@@ -140,7 +168,7 @@ let resizableMixin = (function initializeResizable(){
         }
     }
 
-    function mouseUpHandler(e) {
+    function mouseUpHandler() {
         self.resize(delta, resizing, true);
         resizing = ResizeTypeEnum.None;
 
@@ -148,5 +176,5 @@ let resizableMixin = (function initializeResizable(){
         document.body.removeEventListener("mouseup", mouseUpHandler);
     }
 
-    return resizableMixin;
+    return ResizeControls;
 })();

@@ -67,6 +67,7 @@ let Draggable = (function draggableInitializer() {
         if (this.axis == DragAxisEnum.onlyY || this.axis == DragAxisEnum.Both) {
             let top = e.pageY - innerTopOffset;
             movingElement.style.top = top + "px";
+            
             repositionBorder(top);
         }
 

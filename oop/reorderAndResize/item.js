@@ -18,20 +18,19 @@ let Item = (function initializeItem(){
     Item.prototype = Object.create(Draggable.prototype);
     Item.prototype.constructor = Item;
 
-    Object.assign(Item.prototype, resizableMixin);
+    Object.assign(Item.prototype, Resizable.prototype);
 
     Object.assign(Item.prototype, { 
         resize: function(delta, resizeType, isFinished) {
             
             let modifiesHeight = resizeType != ResizeTypeEnum.Left && resizeType != ResizeTypeEnum.Right;
             let isTop = resizeType == ResizeTypeEnum.Top || resizeType == ResizeTypeEnum.TopLeft || resizeType == ResizeTypeEnum.TopRight;
-            let isBottom = modifiesHeight && !isTop;
             let isLeft = resizeType == ResizeTypeEnum.Left || resizeType == ResizeTypeEnum.TopLeft || resizeType == ResizeTypeEnum.BottomLeft;
 
             this.width += delta.width;
             this.height += delta.height;
 
-            let border = this.element.querySelector('.border');
+            let border = document.querySelector('.border');
             let item = this.element.querySelector('.item');
             
             item.style.width = this.width + "px";
@@ -39,19 +38,18 @@ let Item = (function initializeItem(){
             border.style.height = this.height + padding / 2 + "px";
     
             if (isLeft) {
-                item.style.left = parseInt(item.style.left.replace('px', '')) - delta.width + "px";
+                this.left -= delta.width;
+                item.style.left = this.left + "px";
+                border.style.left = this.left - padding / 2+ "px";
             }
     
             if (isTop) {
-                border.style.top = '';
-                border.style.bottom = - padding / 2 + "px";
-            } else if (isBottom) {
-                border.style.top = - padding / 2 + "px";
-                border.style.bottom = '';
+                border.style.top = parseInt(border.style.top.replace('px', '')) - delta.height + "px";
             }
  
             if (modifiesHeight && isFinished) {
                 item.style.height = this.height + "px";
+                border.style.top = this.element.getBoundingClientRect().top - padding / 2 + "px";
             }
         }
     });
@@ -74,7 +72,7 @@ let Item = (function initializeItem(){
     function clickHandler(e) {
         if (previouslyClicked != null && !e.target.classList.contains('handler')) {
             previouslyClicked.classList.remove('clicked');
-            previouslyClicked.innerHTML = '';
+            this.hideBorder();
         }
 
         if (!e.target.classList.contains('item') || document.querySelector('.item-wrapper.moving') != null) {
@@ -83,7 +81,7 @@ let Item = (function initializeItem(){
 
         e.target.classList.add('clicked');
         if (this instanceof Item) {
-            this.element.firstChild.append(this.drawBorderWithHandlers());
+            this.drawBorderWithHandlers();
         }
         previouslyClicked = e.target;
     }

@@ -29,11 +29,15 @@ let List = (function initializeList() {
         },
 
         getItemFromPoint: function(x, y) {
+            let movingItemIdx = -1;
             let rect = document.querySelector('.list').getBoundingClientRect();
             let innerY = y - rect.top;
+            
+            let lastItem = this.items[this.items.length - 1];
+            let minY = -2 * itemSpacing;
             let maxY = rect.bottom - rect.top + this.items[this.items.length - 1].height;
             
-            if (innerY < 0 || innerY > maxY){
+            if ( minY > innerY || innerY > maxY) {
                 return;
             }
 
@@ -43,7 +47,15 @@ let List = (function initializeList() {
                 let itemHeight = this.items[i].height + itemSpacing;
                 currentOffset -= itemHeight;
 
+                if (this.items[i].moving) {
+                    movingItemIdx = i;
+                }
+
                 if (currentOffset <= 0) {
+                    if ((movingItemIdx == i || movingItemIdx == i - 1) && movingItemIdx != -1) {
+                        return;
+                    }
+
                     return this.items[i];
                 }
             }
