@@ -1,23 +1,16 @@
 let ResizeControls = (function initializeResizeControls() {
-    let delta = {
-        width: 0,
-        height: 0
-    };
     let parentClass = 'list';
-    let topOffset;
-    let resizing = ResizeTypeEnum.None;
-    let self;
 
     let wrapper;
-    let border, handlerT, handlerTR, handlerR, handlerBR, handlerB, handlerBL, handlerL, handlerTL;
-    let mouseDownHandlerWithContext;
+    let handlers;
+    let propagateEventToItemWithContext;
 
     function ResizeControls() {
+        this.topOffset = 0;
     };
 
     Object.assign(ResizeControls.prototype, {
         drawBorderWithHandlers: function() {
-            self = this;
             let justCreated = false;
 
             if (wrapper == null) {
@@ -31,14 +24,14 @@ let ResizeControls = (function initializeResizeControls() {
             wrapper.setAttribute('width', this.width + 2 * padding);
             wrapper.setAttribute('height', this.height + 2 * padding);
             wrapper.style.left = this.coord.x - padding + "px";
-            topOffset = document.querySelector('.' + parentClass) == null ? 0 : document.querySelector('.' + parentClass).getBoundingClientRect().top;   
-            wrapper.style.top = topOffset + this.coord.y - padding + "px";
-
-            mouseDownHandlerWithContext = mouseDownHandler.bind(this);
+            
+            if (document.querySelector('.' + parentClass) != null) {
+                this.topOffset = document.querySelector('.' + parentClass).getBoundingClientRect().top;
+            } 
+            wrapper.style.top = this.topOffset + this.coord.y - padding + "px";
 
             if (wrapper != null && !justCreated) {
-                wrapper.addEventListener("mousedown", mouseDownHandlerWithContext);
-                updateResizeHandlers.call(this);
+                window.requestAnimationFrame(updateResizeHandlers.bind(this));
                 wrapper.style.display = 'initial';
                 return;
             }
@@ -46,35 +39,35 @@ let ResizeControls = (function initializeResizeControls() {
             border = document.createElementNS(svgNamespace, 'path');
             border.classList.add('border');
             
-            handlerT = document.createElementNS(svgNamespace, 'rect');
-            handlerT.classList.add('handler', 'handler-top');
+            let handlerT = new ResizePoint(this, ResizeTypeEnum.Top, 'handler-top');
+            let handlerTR = new ResizePoint(this, ResizeTypeEnum.TopRight, 'handler-top-right');
+            let handlerTL = new ResizePoint(this, ResizeTypeEnum.TopLeft, 'handler-top-left');
 
-            handlerTR = document.createElementNS(svgNamespace, 'rect');
-            handlerTR.classList.add('handler', 'handler-top-right');
-    
-            handlerR = document.createElementNS(svgNamespace, 'rect');
-            handlerR.classList.add('handler', 'handler-right');
+            let handlerB = new ResizePoint(this, ResizeTypeEnum.Bottom, 'handler-bottom');
+            let handlerBL = new ResizePoint(this, ResizeTypeEnum.BottomLeft, 'handler-bottom-left');
+            let handlerBR = new ResizePoint(this, ResizeTypeEnum.BottomRight, 'handler-bottom-right');
 
-            handlerBR = document.createElementNS(svgNamespace, 'rect');
-            handlerBR.classList.add('handler', 'handler-bottom-right');
+            let handlerL = new ResizePoint(this, ResizeTypeEnum.Left, 'handler-left');
+            let handlerR = new ResizePoint(this, ResizeTypeEnum.Right, 'handler-right');
 
-            handlerB = document.createElementNS(svgNamespace, 'rect');
-            handlerB.classList.add('handler', 'handler-bottom');
+            handlers = [
+                handlerT,
+                handlerTR,
+                handlerR,
+                handlerB,
+                handlerBL,
+                handlerBR,
+                handlerL,
+                handlerTL
+            ];
             
-            handlerBL = document.createElementNS(svgNamespace, 'rect');
-            handlerBL.classList.add('handler', 'handler-bottom-left');
-    
-            handlerL = document.createElementNS(svgNamespace, 'rect');
-            handlerL.classList.add('handler', 'handler-left');
-
-            handlerTL = document.createElementNS(svgNamespace, 'rect');
-            handlerTL.classList.add('handler', 'handler-top-left');
-
-            wrapper.addEventListener("mousedown" , mouseDownHandlerWithContext);
             window.requestAnimationFrame(updateResizeHandlers.bind(this));
 
             wrapper.style.display = 'initial';
-            wrapper.append(border, handlerT, handlerTR, handlerR, handlerB, handlerBL, handlerBR, handlerL, handlerTL)
+            wrapper.append(
+                border,
+                ...handlers.map(x => x.element)
+            );
             document.body.appendChild(wrapper);
         }
     });
@@ -91,112 +84,25 @@ let ResizeControls = (function initializeResizeControls() {
             + ', H ' + offset 
             + ', V' +  offset
         );
-        
-        handlerT.setAttribute('x', this.width / 2 + offset);
-        handlerT.setAttribute('y', 1);
 
-        handlerTR.setAttribute('x', this.width + offset);
-        handlerTR.setAttribute('y', 1);
+        let tmpHandler = propagateEventToItem.bind(this); 
+        handlers.forEach(function(handler) {
+            handler.removeListener("resized", propagateEventToItemWithContext);
+            handler.addListener("resized", tmpHandler);
+        });
+        propagateEventToItemWithContext = tmpHandler;
 
-        handlerR.setAttribute('x', this.width + offset);
-        handlerR.setAttribute('y', this.height / 2 + offset / 2);
+        handlers.forEach(function(handler) {
+            handler.updatePosition(this);
+        }.bind(this));
+    };
 
-        handlerBR.setAttribute('x', this.width + offset);
-        handlerBR.setAttribute('y', this.height + offset);
+    function propagateEventToItem(e) {
+        if (e.type = 'resized') {
+            // console.log(this.id)
+            this.fire(e);
+        }
+    }
     
-        handlerB.setAttribute('x', this.width / 2  + offset);
-        handlerB.setAttribute('y', this.height + offset);
-        
-        handlerBL.setAttribute('x', 1);
-        handlerBL.setAttribute('y', this.height + offset);
-
-        handlerL.setAttribute('x', 1);
-        handlerL.setAttribute('y', this.height / 2 + offset / 2);
-
-        handlerTL.setAttribute('x', 1);
-        handlerTL.setAttribute('y', 1);
-    };
-    
-    function mouseDownHandler(e) {
-        if (!e.target.classList.contains('handler')) {
-            return;
-        }
-        if (e.target.classList.contains('handler-top')) {
-            resizing = ResizeTypeEnum.Top;
-
-        } else if (e.target.classList.contains('handler-right')) {
-            resizing = ResizeTypeEnum.Right;
-
-        } else if (e.target.classList.contains('handler-bottom')) {
-            resizing = ResizeTypeEnum.Bottom;
-
-        } else if (e.target.classList.contains('handler-left')) {
-            resizing = ResizeTypeEnum.Left;
-
-        } else if (e.target.classList.contains('handler-top-right')) {
-            resizing = ResizeTypeEnum.TopRight;
-
-        } else if (e.target.classList.contains('handler-top-left')) {
-            resizing = ResizeTypeEnum.TopLeft;
-
-        } else if (e.target.classList.contains('handler-bottom-right')) {
-            resizing = ResizeTypeEnum.BottomRight;
-            
-        } else if (e.target.classList.contains('handler-bottom-left')) {
-            resizing = ResizeTypeEnum.BottomLeft;
-        }
-
-        if (resizing == ResizeTypeEnum.None) {
-            return;
-        }
-        self = this;
-        delta.width = 0; 
-        delta.height = 0;
-
-        document.body.addEventListener("mousemove", mouseMoveHandler);
-        document.body.addEventListener("mouseup", mouseUpHandler);
-        document.body.addEventListener("mouseleave", mouseUpHandler);
-    };
-
-    function mouseMoveHandler(e) {
-        // 20px from page margin
-        if ( e.pageX < pageMargin || e.pageX > window.innerWidth - pageMargin) {
-            return;
-        }
-        
-        if (resizing == ResizeTypeEnum.Top || resizing == ResizeTypeEnum.Bottom || resizing >= 5) {
-            let isBottom = resizing == ResizeTypeEnum.Bottom || resizing == ResizeTypeEnum.BottomLeft || resizing == ResizeTypeEnum.BottomRight;
-            let newHeight = !isBottom ? (self.coord.y + self.height) - e.pageY + topOffset : e.pageY - self.coord.y -  topOffset;
-
-            if (newHeight > maxHeight) newHeight = maxHeight;
-            if (newHeight < minHeight) newHeight = minHeight;
-            
-            delta.height = newHeight - self.height;
-        }
-
-        if (resizing == ResizeTypeEnum.Left || resizing == ResizeTypeEnum.Right || resizing >= 5) {
-            let isLeft = resizing == ResizeTypeEnum.Left || resizing == ResizeTypeEnum.TopLeft || resizing == ResizeTypeEnum.BottomLeft;
-            let newWidth = isLeft ?  (self.coord.x + self.width) - e.pageX : e.pageX - self.coord.x;
-
-            if (newWidth < minWidth) newWidth = minWidth;
-            if (newWidth > maxWidth) newWidth = maxWidth;
-
-            delta.width = (newWidth - self.width);
-        }
-
-        if (delta.height != 0 || delta.width != 0) {
-            window.requestAnimationFrame(updateResizeHandlers.bind(self));
-            self.resize(delta, resizing);
-        }
-    };
-
-    function mouseUpHandler() {
-        self.resize(delta, resizing, true);
-        resizing = ResizeTypeEnum.None;
-
-        document.body.removeEventListener("mousemove", mouseMoveHandler);
-        document.body.removeEventListener("mouseup", mouseUpHandler);
-    };
-
     return ResizeControls;
 })();

@@ -1,6 +1,9 @@
 let Item = (function initializeItem(){
     let previouslyClicked = null;
     let id = 0;
+    let movingElement = null;
+    let hovered = null;
+    let innerTopOffset = 0;
 
     function Item(parentList, Y, customClass = undefined) {
         this.parentList = parentList;
@@ -14,7 +17,8 @@ let Item = (function initializeItem(){
         this.clickHandlerWithContext = clickHandler.bind(this);
         this.element = createElement(customClass, this);
         
-        Draggable.call(this, this.element, DragAxisEnum.onlyY);
+        Draggable.call(this, DragAxisEnum.onlyY);
+        this.addListener("resized", this.resize.bind(this));
     }
 
     Item.prototype = Object.create(Draggable.prototype);
@@ -57,12 +61,16 @@ let Item = (function initializeItem(){
             Q 0 0 ${roundingOffset} 0 z`);
         },
 
-        resize: function(delta, resizeType, isFinished) {
+        resize: function(e) {
+            let delta = e.data.delta,
+                resizeType = e.data.resizeType,
+                finished = e.data.finished;
+            this.width += delta.width;
+            this.height += delta.height;
+
             let isTop = resizeType == ResizeTypeEnum.Top || resizeType == ResizeTypeEnum.TopLeft || resizeType == ResizeTypeEnum.TopRight;
             let modifiesHeight = resizeType != ResizeTypeEnum.Left && resizeType != ResizeTypeEnum.Right;
             let isLeft = resizeType == ResizeTypeEnum.Left || resizeType == ResizeTypeEnum.TopLeft || resizeType == ResizeTypeEnum.BottomLeft;
-            this.width += delta.width;
-            this.height += delta.height;
     
             if (isLeft) {
                 this.coord.x -= delta.width;
@@ -75,10 +83,140 @@ let Item = (function initializeItem(){
             window.requestAnimationFrame(this.redraw.bind(this));
             this.updateCoord();
     
-            if (!modifiesHeight || isFinished) {
+            if (!modifiesHeight || finished) {
                 window.requestAnimationFrame(this.parentList.draw.bind(this.parentList));
             }
             window.requestAnimationFrame(this.drawBorderWithHandlers.bind(this));
+        },
+
+        mouseDown: function(e) {
+            if (!e.target.classList.contains('item') || e.target.classList.contains('hidden') || movingElement != null) {
+                return;
+            }
+            
+            const topOffset = document.querySelector('.list') == null ? 0 : document.querySelector('.list').getBoundingClientRect().top;
+            this.moving = true;
+            innerTopOffset = e.pageY - this.coord.y - topOffset;
+            innerLeftOffset = e.pageX - this.coord.x;
+        },
+
+        mouseMove: function(e) {
+            if (movingElement == null) {
+                let elem = this.element.cloneNode(true);
+                elem.setAttribute('transform', `translate(${this.coord.x}, 10)`);
+    
+                movingElement = document.createElementNS(svgNamespace, "svg");
+                movingElement.classList.add('moving');
+                movingElement.setAttribute('width', this.width);
+                movingElement.setAttribute('height', this.height + 3 * padding);
+                movingElement.style.left = this.coord.x + "px";
+                
+                this.element.parentNode.classList.add('moving');
+                this.element.classList.add('hidden');
+                
+                movingElement.appendChild(elem);
+                movingElement.querySelector('.item-wrapper').setAttribute('transform', '');
+                document.body.appendChild(movingElement);
+            }
+    
+            // moving item display
+            if (this.axis == DragAxisEnum.onlyX || this.axis == DragAxisEnum.Both) {
+                let left =  e.pageX - (this.width / 2);
+                movingElement.style.left = e.pageX - (this.width / 2) + "px";
+    
+                repositionBorder(null, left);
+            }
+            if (this.axis == DragAxisEnum.onlyY || this.axis == DragAxisEnum.Both) {
+                let top = e.pageY - innerTopOffset;
+                movingElement.style.top = top + "px";
+                
+                repositionBorder(top);
+            }
+    
+            // new position + indicator 
+            let currentItem = this.parentList.getItemFromPoint(e.pageX, e.pageY);
+            if (currentItem == null) {
+                if (hovered != null) {
+                    hovered.classList.remove('hovered');
+                    hovered.classList.remove('hovered-bellow');
+                    hovered = null;
+                }
+                return;
+            }
+            currentItem = currentItem.element;
+    
+            if (!currentItem.classList.contains('item') && !currentItem.classList.contains('item-wrapper')) {
+                return;
+            }
+    
+            if (!currentItem.classList.contains('item-wrapper')) {
+                currentItem = currentItem.parentNode;
+            }
+    
+            if (hovered != null) {
+                hovered.classList.remove('hovered');
+                hovered.classList.remove('hovered-bellow');
+            }
+    
+            let rect = currentItem.getBoundingClientRect();
+            let position = rect.bottom - e.pageY;
+            
+            // move bellow if click is lower than the middle of the item hovered
+            if (position < rect.height / 2) {
+                hovered = currentItem.nextSibling;
+            } else {
+                hovered = currentItem;
+            }
+    
+            if (hovered != null && hovered.classList.contains('hidden')) {
+                return;
+            }
+    
+            if (hovered != null) {
+                hovered.classList.add('hovered');
+            } else {
+                // bellow
+                hovered = currentItem;
+                hovered.classList.add('hovered-bellow');
+            }
+        },
+
+        mouseUp: function(e) {
+            this.moving = false;
+            innerTopOffset = 0;
+            innerLeftOffset = 0;
+    
+            this.element.classList.remove('hidden');
+            this.element.parentNode.classList.remove('moving');
+            if (movingElement != null) {
+                movingElement.remove();
+                movingElement = null;
+            }
+            
+            if (hovered != null) {
+                let atTheEnd = hovered.classList.contains('hovered-bellow');
+                hovered.classList.remove('hovered');
+                hovered.classList.remove('hovered-bellow');
+    
+                if (atTheEnd) {
+                    this.element.parentNode.insertBefore(this.element, hovered.nextSibling);
+                } else {
+                    this.element.parentNode.insertBefore(this.element, hovered);
+                }
+    
+                this.fire({
+                    type:"moved",
+                    data: {
+                        id: this.id,
+                        before: hovered.getAttribute('item-id'),
+                        atTheEnd: atTheEnd
+                    }
+                });
+                
+                hovered = null;
+            } else {
+                this.drawBorderWithHandlers();
+            }
         }
     });
 
@@ -130,6 +268,22 @@ let Item = (function initializeItem(){
         e.target.parentNode.classList.add('clicked');
         window.requestAnimationFrame(this.drawBorderWithHandlers.bind(this));
         previouslyClicked = e.target.parentNode;
+    }
+
+    function repositionBorder(top, left) {
+        let border = document.querySelector('.wrapper');
+
+        if (!border) {
+            return;
+        }
+
+        if (top) {
+            border.style.top = top - padding + "px";
+        }
+
+        if (left) {
+            border.style.left = left - padding + "px";
+        }
     }
 
     return Item;
