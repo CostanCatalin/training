@@ -10,6 +10,7 @@ let Item = (function initializeItem(){
         this.id = id++;
         this.width = initialWidth;
         this.height = initialHeight;
+        this.axis = DragAxisEnum.onlyY;
         this.coord = {
             x: X,
             y: Y
@@ -18,12 +19,14 @@ let Item = (function initializeItem(){
         this.element = createElement(customClass, this);
         
         Draggable.call(this, DragAxisEnum.onlyY);
+        Event.call(this);
         this.addListener("resized", this.resize.bind(this));
     }
 
     Item.prototype = Object.create(Draggable.prototype);
     Item.prototype.constructor = Item;
     Object.assign(Item.prototype, Resizable.prototype);
+    Object.assign(Item.prototype, Event.prototype);
 
     Object.assign(Item.prototype, {
         updateCoord: function(x, y) {
@@ -134,28 +137,23 @@ let Item = (function initializeItem(){
             }
     
             // new position + indicator 
+            if (hovered != null) {
+                hovered.classList.remove('hovered');
+                hovered.classList.remove('hovered-bellow');
+            }
+
             let currentItem = this.parentList.getItemFromPoint(e.pageX, e.pageY);
             if (currentItem == null) {
-                if (hovered != null) {
-                    hovered.classList.remove('hovered');
-                    hovered.classList.remove('hovered-bellow');
-                    hovered = null;
-                }
                 return;
             }
             currentItem = currentItem.element;
-    
+            console.log(currentItem);
             if (!currentItem.classList.contains('item') && !currentItem.classList.contains('item-wrapper')) {
                 return;
             }
     
             if (!currentItem.classList.contains('item-wrapper')) {
                 currentItem = currentItem.parentNode;
-            }
-    
-            if (hovered != null) {
-                hovered.classList.remove('hovered');
-                hovered.classList.remove('hovered-bellow');
             }
     
             let rect = currentItem.getBoundingClientRect();
@@ -171,7 +169,6 @@ let Item = (function initializeItem(){
             if (hovered != null && hovered.classList.contains('hidden')) {
                 return;
             }
-    
             if (hovered != null) {
                 hovered.classList.add('hovered');
             } else {
@@ -179,13 +176,14 @@ let Item = (function initializeItem(){
                 hovered = currentItem;
                 hovered.classList.add('hovered-bellow');
             }
+            currentItem = null;
         },
 
-        mouseUp: function(e) {
+        mouseUp: function() {
             this.moving = false;
             innerTopOffset = 0;
             innerLeftOffset = 0;
-    
+            
             this.element.classList.remove('hidden');
             this.element.parentNode.classList.remove('moving');
             if (movingElement != null) {
@@ -193,30 +191,31 @@ let Item = (function initializeItem(){
                 movingElement = null;
             }
             
-            if (hovered != null) {
-                let atTheEnd = hovered.classList.contains('hovered-bellow');
-                hovered.classList.remove('hovered');
-                hovered.classList.remove('hovered-bellow');
-    
-                if (atTheEnd) {
-                    this.element.parentNode.insertBefore(this.element, hovered.nextSibling);
-                } else {
-                    this.element.parentNode.insertBefore(this.element, hovered);
-                }
-    
-                this.fire({
-                    type:"moved",
-                    data: {
-                        id: this.id,
-                        before: hovered.getAttribute('item-id'),
-                        atTheEnd: atTheEnd
-                    }
-                });
-                
-                hovered = null;
-            } else {
+            if (hovered == null) {
                 this.drawBorderWithHandlers();
+                return;
             }
+
+            let atTheEnd = hovered.classList.contains('hovered-bellow');
+            hovered.classList.remove('hovered');
+            hovered.classList.remove('hovered-bellow');
+
+            if (atTheEnd) {
+                this.element.parentNode.insertBefore(this.element, hovered.nextSibling);
+            } else {
+                this.element.parentNode.insertBefore(this.element, hovered);
+            }
+
+            this.fire({
+                type:"moved",
+                data: {
+                    id: this.id,
+                    before: hovered.getAttribute('item-id'),
+                    atTheEnd: atTheEnd
+                }
+            });
+            
+            hovered = null;
         }
     });
 

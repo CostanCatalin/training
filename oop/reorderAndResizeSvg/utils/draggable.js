@@ -1,17 +1,12 @@
 let Draggable = (function initializeDraggable() {
 
-    function Draggable(axis = DragAxisEnum.Both) {
+    function Draggable() {
         this.mouseDownHandlerWithContext = mouseDownHandler.bind(this);
         this.mouseMoveHandlerWithContext = mouseMoveHandler.bind(this);
         this.mouseUpHandlerWithContext = mouseUpHandler.bind(this);
-        this.axis = axis;
 
         this.element.addEventListener("mousedown", this.mouseDownHandlerWithContext);
-
-        Event.call(this);
     }
-
-    Object.assign(Draggable.prototype, Event.prototype);
 
     Object.assign(Draggable.prototype, {
         mouseDown: function() {
@@ -24,13 +19,6 @@ let Draggable = (function initializeDraggable() {
 
         mouseUp: function() {
             throw new Error("mouseUp function not implemented");
-        },
-
-        updateContext() {
-            // debugger;
-            this.mouseDownHandlerWithContext = mouseDownHandler.bind(this);
-            this.mouseMoveHandlerWithContext = mouseMoveHandler.bind(this);
-            this.mouseUpHandlerWithContext = mouseUpHandler.bind(this);
         }
     });
 
@@ -43,7 +31,9 @@ let Draggable = (function initializeDraggable() {
     };
 
     function mouseMoveHandler(e) {
-        this.mouseMove(e);
+        window.requestAnimationFrame(function() {
+            this.mouseMove(e);
+        }.bind(this));
     };
 
     function mouseUpHandler(e) {
@@ -51,7 +41,9 @@ let Draggable = (function initializeDraggable() {
         document.body.removeEventListener("mouseup", this.mouseUpHandlerWithContext);
         document.body.removeEventListener("mouseleave", this.mouseUpHandlerWithContext);
 
-        this.mouseUp(e);
+        window.setTimeout(function() {
+            this.mouseUp(e);
+        }.bind(this), 20);
     }
 
     return Draggable;

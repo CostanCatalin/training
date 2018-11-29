@@ -7,6 +7,7 @@ let ResizeControls = (function initializeResizeControls() {
 
     function ResizeControls() {
         this.topOffset = 0;
+        this.axis = ResizeTypeEnum.Both;
     };
 
     Object.assign(ResizeControls.prototype, {

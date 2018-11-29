@@ -13,10 +13,12 @@ let ResizePoint = (function initializeResizePoint() {
         this.resizeType = resizeType;
         
         Draggable.call(this);
+        Event.call(this);
     }
 
     ResizePoint.prototype = Object.create(Draggable.prototype);
     ResizePoint.prototype.constructor = ResizePoint;
+    Object.assign(ResizePoint.prototype, Event.prototype);
     
     Object.assign(ResizePoint.prototype, {
         mouseDown: function() {
