@@ -151,7 +151,7 @@ let ResizeControls = (function initializeResizeControls(){
 
         if (resizing == ResizeTypeEnum.Top || resizing == ResizeTypeEnum.Bottom || resizing >= 5) {
             let isBottom = resizing == ResizeTypeEnum.Bottom || resizing == ResizeTypeEnum.BottomLeft || resizing == ResizeTypeEnum.BottomRight;
-            let newHeight = !isBottom ? rect.bottom - e.pageY : e.pageY - rect.top;
+            let newHeight = !isBottom ? rect.bottom - e.pageY : e.pageY - rect.top - padding;
 
             if (newHeight > maxHeight) {
                 newHeight = maxHeight;

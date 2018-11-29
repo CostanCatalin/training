@@ -147,7 +147,7 @@ let Item = (function initializeItem(){
                 return;
             }
             currentItem = currentItem.element;
-            console.log(currentItem);
+
             if (!currentItem.classList.contains('item') && !currentItem.classList.contains('item-wrapper')) {
                 return;
             }
