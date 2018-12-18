@@ -16,7 +16,6 @@ let Draggable = (function draggableInitializer() {
         document.body.addEventListener("mousedown", deselectClicked);
 
         this.element.addEventListener("mousedown", this.mouseDownHandlerWithContext);
-        // this.element.addEventListener("mouseenter", this.mouseDownHandlerWithContext);
 
         Event.call(this);
     }
@@ -29,8 +28,7 @@ let Draggable = (function draggableInitializer() {
             this.hideBorder();
             return;
         }
-
-        // const topOffset = document.querySelector('.list') == null ? 0 : document.querySelector('.list').getBoundingClientRect().top;
+        
         this.moving = true;
         innerTopOffset = e.pageY - this.element.getBoundingClientRect().top;
         innerLeftOffset = e.pageX - this.left;
