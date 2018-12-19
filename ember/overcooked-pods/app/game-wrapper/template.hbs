@@ -1,0 +1,11 @@
+<div class="wrapper">
+  {{#each model.blocks as |block|}}
+      {{component block.componentName model=block}}
+  {{/each}}
+  
+  {{component model.player.componentName model=model.player}}
+{{!--   
+  {{#each model.items as |item|}}
+    {{component item.componentName model=item}}
+  {{/each}} --}}
+</div>

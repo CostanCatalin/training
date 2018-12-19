@@ -1,0 +1,11 @@
+<div class="wrapper">
+  {{#each model.blocks as |block|}}
+      {{component block.componentName type=block.type x=block.x y=block.y}}
+  {{/each}}
+  
+  {{game-player id=model.player.id x=model.player.x y=model.player.y}}
+  
+  {{#each model.items as |item|}}
+    {{component item.componentName type=item.type x=item.x y=item.y}}
+  {{/each}}
+</div>
