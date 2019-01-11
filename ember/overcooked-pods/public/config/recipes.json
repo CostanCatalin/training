@@ -1,0 +1,86 @@
+{
+  "recipes": [
+    {
+      "id": 0,
+      "name": "Random ingredients",
+      "image": "soup.svg"
+    },
+    {
+      "id": 1,
+      "name": "Tomato soup",
+      "image": "soup.svg",
+      "ingredients": [
+        {
+          "type": {
+            "id": 1,
+            "image": ["tomato.svg", "tomato-sliced.svg"]
+          },
+          "state": 1
+        },
+        {
+          "type": {
+            "id": 1,
+            "image": ["tomato.svg", "tomato-sliced.svg"]
+          },
+          "state": 1
+        },
+        {
+          "type": {
+            "id": 1,
+            "image": ["tomato.svg", "tomato-sliced.svg"]
+          },
+          "state": 1
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Salad",
+      "image": "salad (2).svg",
+      "ingredients": [
+        {
+          "type": {
+            "id": 1,
+            "image": ["tomato.svg", "tomato-sliced.svg"]
+          },
+          "state": 1
+        },
+        {
+          "type": {
+            "id": 2,
+            "image": ["spinach.svg", "spinach-sliced.svg"]
+          },
+          "state": 1
+        },
+        {
+          "type": {
+            "id": 3,
+            "image": ["cheese.png", "cheese-sliced.png"]
+          },
+          "state": 1
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Bacon omlette",
+      "image": "bacon-omlette.png",
+      "ingredients": [
+        {
+          "type": {
+            "id": 4,
+            "image": ["egg.png", null, "fried-egg.png"]
+          },
+          "state": 2
+        },
+        {
+          "type": {
+            "id": 5,
+            "image": ["bacon.png", "bacon-sliced.png", "bacon-sliced.png"]
+          },
+          "state": 2
+        }
+      ]
+    }
+  ]
+}

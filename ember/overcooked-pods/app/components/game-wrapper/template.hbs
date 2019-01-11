@@ -1,0 +1,17 @@
+<div class="wrapper">
+  {{#each model.blocks as |block|}}
+      {{component block.componentName 
+      model=block 
+      blockClick=(action "blockClick" block) 
+      itemClick=(action "itemClick" block.item) 
+      submitOrder=(action "submitOrder" block.item) 
+      ingredientsToRecipe=(action "ingredientsToRecipe" block.item)}}
+  {{/each}}
+  
+  {{component model.player.componentName 
+  model=model.player}}
+</div>
+
+{{end-game 
+gameIsOver=model.gameIsOver 
+model=model.gameData}}

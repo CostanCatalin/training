@@ -1,13 +1,15 @@
 /* eslint-disable complexity */
 import Route from "@ember/routing/route";
 import Constants from "overcooked-pods/constants";
-import Block from "overcooked-pods/game-block/model";
-import ActionBlock from "overcooked-pods/action-block/model";
-import GameWrapper from "overcooked-pods/game-wrapper/model";
-import Player from "overcooked-pods/game-player/model";
-import Plate from "overcooked-pods/plate-item/model";
-import Ingredient from "overcooked-pods/ingredient-item/model";
-import IngredientBlock from "overcooked-pods/ingredient-block/model";
+import Block from "overcooked-pods/components/game-block/model";
+import ActionBlock from "overcooked-pods/components/action-block/model";
+import StoveBlock from "overcooked-pods/components/stove-block/model";
+import GameWrapper from "overcooked-pods/components/game-wrapper/model";
+import Player from "overcooked-pods/components/game-player/model";
+import Plate from "overcooked-pods/components/plate-item/model";
+import CookingContainerItem from "overcooked-pods/components/cooking-container-item/model";
+import IngredientBlock from "overcooked-pods/components/ingredient-block/model";
+import Order from "overcooked-pods/components/game-order/model";
 import { set } from "@ember/object";
 
 export default Route.extend({
@@ -25,17 +27,22 @@ export default Route.extend({
         plate2 = Plate.create({
           type: Constants.ItemTypeEnum.Plate
         }),
-        ingredient1 = Ingredient.create({
-          type: Constants.IngredientEnum.Tomato
+        pan = CookingContainerItem.create({
+          type: Constants.ItemTypeEnum.BoilingPan
         });
 
     let myModel = GameWrapper.create({
       id: "game-model",
       title: "Level 1",
-      score: 0,
       width: 13,
       height: 9,
       player: playerRecord,
+      gameData: {
+        score: 0,
+        ordersCompleted: 0,
+        gameIsOver: false,
+        time: null
+      },
       blocks: [
         Block.create({
           id: ++blockId,
@@ -61,11 +68,11 @@ export default Route.extend({
           y: 0,
           type: Constants.BlockTypeEnum.Table
         }),
-        ActionBlock.create({
+        StoveBlock.create({
           id: ++blockId,
           x: 8,
           y: 0,
-          type: Constants.BlockTypeEnum.BoilingPan
+          type: Constants.BlockTypeEnum.Stove
         }),
         ActionBlock.create({
           id: ++blockId,
@@ -106,24 +113,92 @@ export default Route.extend({
           type: Constants.BlockTypeEnum.SinkTwo
         })
       ],
-      items: [
-        plate1,
-        plate2,
-        ingredient1
+      recipes: [
+        {
+          id: 0,
+          name: "Random ingredients",
+          image: "soup.svg"
+        },
+        {
+          id: 1,
+          name: "Tomato soup",
+          image: "soup.svg",
+          ingredients: [
+            {
+              type: Constants.IngredientEnum.Tomato,
+              state: Constants.IngredientStateEnum.Cut
+            },
+            {
+              type: Constants.IngredientEnum.Tomato,
+              state: Constants.IngredientStateEnum.Cut
+            },
+            {
+              type: Constants.IngredientEnum.Tomato,
+              state: Constants.IngredientStateEnum.Cut
+            }
+          ]
+        },
+        {
+          id: 2,
+          name: "Salad",
+          image: "salad (2).svg",
+          ingredients: [
+            {
+              type: Constants.IngredientEnum.Tomato,
+              state: Constants.IngredientStateEnum.Cut
+            },
+            {
+              type: Constants.IngredientEnum.Spinach,
+              state: Constants.IngredientStateEnum.Cut
+            },
+            {
+              type: Constants.IngredientEnum.Cheese,
+              state: Constants.IngredientStateEnum.Cut
+            }
+          ]
+        },
+        {
+          id: 3,
+          name: "Bacon omlette",
+          image: "bacon-omlette.png",
+          ingredients: [
+            {
+              type: Constants.IngredientEnum.Egg,
+              state: Constants.IngredientStateEnum.Fried
+            },
+            {
+              type: Constants.IngredientEnum.Bacon,
+              state: Constants.IngredientStateEnum.Fried
+            }
+          ]
+        }
+      ],
+      orders: [
+        Order.create({
+          recipeId: 1,
+          duration: 100,
+          startingAt: 0
+        }),
+        Order.create({
+          recipeId: 2,
+          duration: 100,
+          startingAt: 30
+        }),
+        Order.create({
+          recipeId: 3,
+          duration: 100,
+          startingAt: 50
+        })
       ]
     });
 
-    set(myModel.blocks[0], "item", ingredient1);
     set(myModel.blocks[2], "item", plate1);
     set(myModel.blocks[3], "item", plate2);
+    set(myModel.blocks[4], "item", pan);
 
-    set(ingredient1, "parent", myModel.blocks[0]);
     set(plate1, "parent", myModel.blocks[2]);
     set(plate2, "parent", myModel.blocks[3]);
-
-    set(ingredient1, "id", myModel.getNextItemId());
-    set(plate1, "id", myModel.getNextItemId());
-    set(plate2, "id", myModel.getNextItemId());
+    set(pan, "parent", myModel.blocks[4]);
 
     // tables on the edges if they're not occupied
     for (let i = 0; i < myModel.width; i++) {

@@ -4,7 +4,7 @@ export default {
     Ingredient: "box-tomato.png",
     CuttingBoard: "cutting-board-with-knife.png",
     FryingPan: "stove.png",
-    BoilingPan: "stove.png",
+    Stove: "stove.png",
     SinkOne: "sink-1.png",
     SinkTwo: "sink-2.png", 
     CounterOne: "counter-1.png", 
@@ -17,19 +17,19 @@ export default {
     },
     Spinach: {
       id: 2,
-      image: "placeholder.png"
+      image: ["spinach.svg", "spinach-sliced.svg"]
     },
     Cheese: {
       id: 3,
-      image: "placeholder.png"
+      image: ["cheese.png", "cheese-sliced.png"]
     },
     Egg: {
       id: 4,
-      image: "placeholder.png"
+      image: ["egg.png", null, "fried-egg.png"]
     },
     Bacon: {
       id: 5,
-      image: "placeholder.png"
+      image: ["bacon.png", "bacon-sliced.png", "bacon-sliced.png"]
     }
   },
   IngredientStateEnum: {
@@ -42,8 +42,28 @@ export default {
     Plate: {
       id: 0,
       image: "plate.svg"
+    },
+    Pan: {
+      id: 1,
+      image: "pan.png"
+    },
+    BoilingPan: {
+      id: 2,
+      image: "boiling-pan.png"
     }
   },
+  Colours : {
+    yellow: "#ffc425",
+    ember: "#f37735",
+    danger: "#d11141"
+  },
+  URI:{
+    Root: "http://localhost:4200",
+    JSON: {
+      Blocks: "config/blocks.json",
+      Recipes: "config/recipes.json"
+    }
+  }, 
   BoxSize: 75,
   ItemSize: 45,
   MaxIngredients: 4,

@@ -1,0 +1,11 @@
+<div class="item item-{{model.itemClass}}" data-id="{{model.id}}" style={{style}}>
+  {{#each model.ingredients as |ingredient|}}
+    {{component ingredient.componentName model=ingredient}}
+  {{/each}}
+
+  <div class="result" style={{resultStyle}}></div>
+
+  <div class="progress-container" style={{progressStyle}}> 
+    <div class="bar" style={{barWidthStyle}}></div>
+  </div>
+</div>

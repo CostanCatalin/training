@@ -12,7 +12,7 @@ h1 {
 }
 
 .wrapper {
-  margin: 20px auto 0 auto;
+  margin: 120px auto 0 auto;
   position: relative;
   z-index: 1;
   width: calc(13 * 75px);
@@ -23,7 +23,7 @@ h1 {
 .orders {
   width: 100%;
   height: 100px;
-  background-color: wheat;
+  background-color: #eee;
 }
 
 .ember-view {
@@ -43,6 +43,24 @@ h1 {
 .item {
   position: absolute;
   z-index: 15;
+  width: 45px;
+  height: 45px;
+}
+
+.item .ember-view {
+  pointer-events: none;
+  width: 19px;
+  height: 19px;
+  display: inline-block;
+}
+
+.item .item-ingredient {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  left: 0 !important;
+  top: 0 !important;
 }
 
 .player {
@@ -57,33 +75,151 @@ h1 {
 }
 
 .block,
-.item {
+.item,
+.result {
   background-position: center center;
   background-repeat: no-repeat;
   background-size: contain;
-}
-
-.item {
-  width: 45px;
-  height: 45px;
 }
 
 .block {
   background-color: #face65;
 }
 
-.progress {
+.item-pan {
+  width: 60px;
+  height: 60px;
+  bottom: 7px !important;
+}
+
+.item-boiling-pan {
+  width: 75px;
+  height: 75px;
+  bottom: 0 !important;
+  left: 0 !important;
+}
+
+.result {
+  width: 50px;
+  height: 50px;
+}
+
+.progress,
+.progress-container {
   width: 35px;
   height: 10px;
   border-radius: 15px;
   background-color: #ccc;
   position: absolute;
-  left: -10px;
-  bottom: -5px;
   overflow: hidden;
 }
 
-.progress .bar {
+.progress {
+  left: -10px;
+  bottom: -5px;
+}
+
+.progress-container {
+  right: 15px;
+  bottom: 15px;
+}
+
+.bar {
   background-color: green;
   height: 100%;
+}
+
+.order .progress .bar {
+  transition: 1s width;
+}
+
+.orders .ember-view {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.order {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  width: 250px;
+  height: 165px;
+  margin-right: 10px;
+  background-color: white;
+  border: 2px solid #ccc;
+  border-top: none;
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+
+  -webkit-box-shadow: 0px 7px 5px -5px rgba(136,136,136,1);
+  -moz-box-shadow: 0px 7px 5px -5px rgba(136,136,136,1);
+  box-shadow: 0px 7px 5px -5px rgba(136,136,136,1);
+}
+
+.order .progress {
+  height: 25px;
+  width: 100%;
+  position: initial;
+  border-radius: 0;
+}
+
+.order .progress .bar {
+  width: 100%;
+}
+
+.order .image {
+  width: 100px;
+  height: 100px;
+  margin: -10px auto 15px auto;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+}
+
+.order h3 {
+  text-align: center;
+  padding: 0 15px;
+  margin: 10px auto;
+}
+
+.order .ingredient {
+  position: relative;
+  z-index: -5;
+  display: inline-block;
+  vertical-align: top;
+  bottom: 5px;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  background-color: #bcd3d9;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  background-size: auto 30px;
+  background-repeat: no-repeat;
+  background-position: center bottom 5px;
+}
+
+.end-game {
+  position: absolute;
+  z-index: 100;
+  width: 500px;
+  height: 465px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.end-game h2 {
+  margin: 5px 15px;
+}
+
+.dancing-onion-king {
+  width: 350px;
+  height: 350px;
+  margin: 0 auto;
+  background: url('/assets/images/Dancing_Onion_King.gif') center center no-repeat;
+  background-size: contain;
 }

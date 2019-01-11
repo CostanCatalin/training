@@ -1,0 +1,57 @@
+{"blocks": [
+  {
+    "x": 2,
+    "y": 0,
+    "type": ""
+  },
+  {
+    "x": 3,
+    "y": 0,
+    "type": "box-tomato.png"
+  },
+  {    
+    "x": 4,
+    "y": 0,
+    "type": ""
+  },
+  {
+    "x": 5,
+    "y": 0,
+    "type": ""
+  },
+  {
+    "x": 8,
+    "y": 0,
+    "type": "stove.png"
+  },
+  {
+    "type": "counter-1.png",
+    "x": 0,
+    "y": 5
+  },
+  {
+    "x": 0,
+    "y": 6,
+    "type": "counter-3.png"
+  },
+  {
+    "x": 3,
+    "y": 8,
+    "type": "cutting-board-with-knife.png"
+  },
+  {
+    "x": 5,
+    "y": 8,
+    "type": "cutting-board-with-knife.png"
+  },
+  {
+    "x": 12,
+    "y": 3,
+    "type": "sink-1.png"
+  },
+  {
+    "x": 12,
+    "y": 4,
+    "type": "sink-2.png"
+  }
+]}

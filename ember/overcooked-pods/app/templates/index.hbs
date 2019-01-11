@@ -1,9 +1,11 @@
 <h1> {{model.title}} </h1>
-<h2>Score: {{model.score}}</h2>
 
 <div class="orders">
-
+{{#each model.activeOrders as |order|}}
+    {{game-order model=order}}
+{{/each}}
 </div>
 
 {{game-wrapper model=model}}
+
 {{outlet}}

@@ -1,0 +1,12 @@
+<div class="order">
+  <div class="progress"> 
+    <div class="bar" style={{barStyle}}></div>
+  </div>
+
+  <div class="image" style={{style}}></div>
+  <h3>{{model.recipe.name}}</h3>
+  {{#each model.recipe.ingredients as |ingredient|}}
+    <div class="ingredient" style={{ingredient.style}}>
+    </div>
+  {{/each}}
+</div>

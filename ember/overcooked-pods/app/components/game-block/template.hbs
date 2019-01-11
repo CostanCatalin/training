@@ -1,0 +1,8 @@
+<div class="block" data-id="{{model.id}}" style={{style}}>  
+  {{#if model.item}}
+    {{component model.item.componentName
+    model=model.item
+    itemClick=(action "itemClick" model.item)
+    }}
+  {{/if}}
+</div>
