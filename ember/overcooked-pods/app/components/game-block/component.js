@@ -9,10 +9,10 @@ export default Component.extend({
   ingredientsToRecipe: null, // comes in
   style: null,
 
-  init() {
-    this._super(...arguments);
+  init(...args) {
+    this._super(args);
     this.set("style", htmlSafe(`left: ${this.get("model.x") * Constants.BoxSize}px; top: ${this.get("model.y") * Constants.BoxSize}px;`));
-    if (this.get("model.type") != undefined) {
+    if (this.get("model.type")) {
       this.set("style", htmlSafe(`${this.get("style")} background-image: url('${Constants.ImagesRootPath}/${this.get("model.type")}');`));
     }
   },

@@ -35,6 +35,8 @@ export default Plate.extend({
   }),
 
   resultStyle: computed("model.result", function() {
-    return htmlSafe(`background-image: url('${Constants.ImagesRootPath}${this.get("model.result.image")}')`);
+    if (this.get("model.result.image")) {
+      return htmlSafe(`background-image: url('${Constants.ImagesRootPath}${this.get("model.result.image")}')`);
+    }
   })
 });

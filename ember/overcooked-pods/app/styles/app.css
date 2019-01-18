@@ -223,3 +223,9 @@ h1 {
   background: url('/assets/images/Dancing_Onion_King.gif') center center no-repeat;
   background-size: contain;
 }
+
+.tooltip__content {
+  background-color: pink;
+  width: 500px;
+  height: 500px;
+}

@@ -14,15 +14,16 @@ export default Component.extend({
     this._super(args);
     let recipe = this.get("recipes").getById(this.get("model.recipeId"));
     this.set("model.recipe", recipe);
-    
 
-    for (let i = 0; i < this.get("recipe.ingredients").length; i++) {
+    for (let i = 0; i < this.get("model.recipe.ingredients").length; i++) {
       let ingredient = this.get("model.recipe.ingredients").objectAt(i);
       let image = get(ingredient, "type.image").objectAt(get(ingredient, "state"));
       set(ingredient, "style", htmlSafe(`background-image: url('${Constants.ImagesRootPath}${image}');`));
     }
-
-    this.set("style", htmlSafe(`background-image: url('${Constants.ImagesRootPath}${this.get("model.recipe.image")}')`));
+    
+    if (this.get("model.recipe.image")) {
+      this.set("style", htmlSafe(`background-image: url('${Constants.ImagesRootPath}${this.get("model.recipe.image")}')`));
+    }
   },
 
   progressChanged: observer("model.progress", function() {

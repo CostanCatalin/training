@@ -2,17 +2,17 @@
 import Route from "@ember/routing/route";
 import Constants from "overcooked-pods/constants";
 import Block from "overcooked-pods/components/game-block/model";
-import ActionBlock from "overcooked-pods/components/action-block/model";
-import StoveBlock from "overcooked-pods/components/stove-block/model";
 import GameWrapper from "overcooked-pods/components/game-wrapper/model";
 import Player from "overcooked-pods/components/game-player/model";
 import Plate from "overcooked-pods/components/plate-item/model";
 import CookingContainerItem from "overcooked-pods/components/cooking-container-item/model";
-import IngredientBlock from "overcooked-pods/components/ingredient-block/model";
 import Order from "overcooked-pods/components/game-order/model";
 import { set } from "@ember/object";
+import { inject as service } from "@ember/service";
 
 export default Route.extend({
+  blocks: service("game-blocks"),
+  
   model() {
     let blockId = -1;
     let playerRecord = Player.create({
@@ -43,136 +43,7 @@ export default Route.extend({
         gameIsOver: false,
         time: null
       },
-      blocks: [
-        Block.create({
-          id: ++blockId,
-          x: 2,
-          y: 0,
-          type: Constants.BlockTypeEnum.Table
-        }),
-        IngredientBlock.create({
-          id: ++blockId,
-          x: 3,
-          y: 0,
-          type: Constants.BlockTypeEnum.Ingredient
-        }),
-        Block.create({
-          id: ++blockId,
-          x: 4,
-          y: 0,
-          type: Constants.BlockTypeEnum.Table
-        }),
-        Block.create({
-          id: ++blockId,
-          x: 5,
-          y: 0,
-          type: Constants.BlockTypeEnum.Table
-        }),
-        StoveBlock.create({
-          id: ++blockId,
-          x: 8,
-          y: 0,
-          type: Constants.BlockTypeEnum.Stove
-        }),
-        ActionBlock.create({
-          id: ++blockId,
-          type: Constants.BlockTypeEnum.CounterOne,
-          x: 0,
-          y: 5
-        }),
-        ActionBlock.create({
-          id: ++blockId,
-          x: 0,
-          y: 6,
-          type: Constants.BlockTypeEnum.CounterTwo
-        }),
-        ActionBlock.create({
-          id: ++blockId,
-          x: 3,
-          y: 8,
-          type: Constants.BlockTypeEnum.CuttingBoard,
-          transformsToState: Constants.IngredientStateEnum.Cut
-        }),
-        ActionBlock.create({
-          id: ++blockId,
-          x: 5,
-          y: 8,
-          type: Constants.BlockTypeEnum.CuttingBoard,
-          transformsToState: Constants.IngredientStateEnum.Cut
-        }),
-        ActionBlock.create({
-          id: ++blockId,
-          x: 12,
-          y: 3,
-          type: Constants.BlockTypeEnum.SinkOne
-        }),
-        ActionBlock.create({
-          id: ++blockId,
-          x: 12,
-          y: 4,
-          type: Constants.BlockTypeEnum.SinkTwo
-        })
-      ],
-      recipes: [
-        {
-          id: 0,
-          name: "Random ingredients",
-          image: "soup.svg"
-        },
-        {
-          id: 1,
-          name: "Tomato soup",
-          image: "soup.svg",
-          ingredients: [
-            {
-              type: Constants.IngredientEnum.Tomato,
-              state: Constants.IngredientStateEnum.Cut
-            },
-            {
-              type: Constants.IngredientEnum.Tomato,
-              state: Constants.IngredientStateEnum.Cut
-            },
-            {
-              type: Constants.IngredientEnum.Tomato,
-              state: Constants.IngredientStateEnum.Cut
-            }
-          ]
-        },
-        {
-          id: 2,
-          name: "Salad",
-          image: "salad (2).svg",
-          ingredients: [
-            {
-              type: Constants.IngredientEnum.Tomato,
-              state: Constants.IngredientStateEnum.Cut
-            },
-            {
-              type: Constants.IngredientEnum.Spinach,
-              state: Constants.IngredientStateEnum.Cut
-            },
-            {
-              type: Constants.IngredientEnum.Cheese,
-              state: Constants.IngredientStateEnum.Cut
-            }
-          ]
-        },
-        {
-          id: 3,
-          name: "Bacon omlette",
-          image: "bacon-omlette.png",
-          ingredients: [
-            {
-              type: Constants.IngredientEnum.Egg,
-              state: Constants.IngredientStateEnum.Fried
-            },
-            {
-              type: Constants.IngredientEnum.Bacon,
-              state: Constants.IngredientStateEnum.Fried
-            }
-          ]
-        }
-      ],
+      blocks: this.blocks.get(),
       orders: [
         Order.create({
           recipeId: 1,

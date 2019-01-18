@@ -15,7 +15,9 @@ export default Component.extend({
 
   style: computed("model", {
     get() {
-      return htmlSafe(`left: ${this.get("offset")}px; bottom: ${this.get("offset")}px; background-image: url('${Constants.ImagesRootPath}${this.get("model.type.image")}')`);
+      if (this.get("model.type.image")) {
+        return htmlSafe(`left: ${this.get("offset")}px; bottom: ${this.get("offset")}px; background-image: url('${Constants.ImagesRootPath}${this.get("model.type.image")}')`);
+      }
     }
   }),
 
