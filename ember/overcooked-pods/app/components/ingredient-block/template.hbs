@@ -1,5 +1,10 @@
-<div class="block ingredient-block" data-id="{{model.id}}" style={{style}}>  
+<div class="block ingredient-block" data-id="{{model.id}}" style={{style}}> 
+  <div class="type" style={{ingredientTypeStyle}}></div>
   {{#if model.item}}
-    {{component model.item.componentName model=model.item itemClick=(action "itemClick" model.item)}}
+    {{component model.item.componentName 
+    model=model.item 
+    itemClick=(action "itemClick" model.item)
+    playerHasItem=(action "playerHasItem")
+    }}
   {{/if}}
 </div>

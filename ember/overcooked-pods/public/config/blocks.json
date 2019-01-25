@@ -1,23 +1,48 @@
 [
   {
+    "x": 1,
+    "y": 0,
+    "type": "box.png",
+    "ingredientType": {
+      "id": 1,
+      "image": ["tomato.svg", "tomato-sliced.svg"]
+    }
+  },
+  {
     "x": 2,
     "y": 0,
-    "type": ""
+    "type": "box.png",
+    "ingredientType": {
+      "id": 2,
+      "image": ["spinach.svg", "spinach-sliced.svg"]
+    }
   },
   {
     "x": 3,
     "y": 0,
-    "type": "box-tomato.png"
+    "type": "box.png",
+    "ingredientType": {
+      "id": 3,
+      "image": ["cheese.png", "cheese-sliced.png"]
+    }
   },
-  {    
+  {
     "x": 4,
     "y": 0,
-    "type": ""
+    "type": "box.png",
+    "ingredientType": {
+      "id": 4,
+      "image": ["egg.png", null, "fried-egg.png"]
+    }
   },
   {
     "x": 5,
     "y": 0,
-    "type": ""
+    "type": "box.png",
+    "ingredientType": {
+      "id": 5,
+      "image": ["bacon.png", "bacon-sliced.png", "bacon-sliced.png"]
+    }
   },
   {
     "x": 8,

@@ -1,8 +1,13 @@
+/* eslint-disable complexity */
 import Component from "@ember/component";
 import Constants from "overcooked-pods/constants";
 import Utils from "overcooked-pods/utils";
-import { set } from "@ember/object";
+import { set, get } from "@ember/object";
 import { alias } from "@ember/object/computed";
+import { inject as service } from "@ember/service";
+
+const MAX_SCORE_PER_RECIPE = [0, 150, 200, 300];
+let SecondsBetweenOrders = 15;
 
 export default Component.extend({
   currentTime: 0,
@@ -10,6 +15,8 @@ export default Component.extend({
   intervalRef: null,
   model: null, //comes in
   player: alias("model.player"),
+  gameData: alias("model.gameData"),
+  recipesService: service("game-recipes"),
   
   didRender() {
     if (this.gameInitialized) {
@@ -31,8 +38,8 @@ export default Component.extend({
       return;
     }
     let rect = this.element.firstChild.getBoundingClientRect();
-    let x = Math.round((e.pageX - rect.left) / Constants.BoxSize);
-    let y = Math.round((e.pageY - rect.top) / Constants.BoxSize);
+    let x = Math.floor((e.pageX - rect.left) / Constants.BoxSize);
+    let y = Math.floor((e.pageY - rect.top) / Constants.BoxSize);
     this.movePlayer(x, y);
   },
 
@@ -80,14 +87,29 @@ export default Component.extend({
       }
 
       this.set("player.item.parent", this.get("model.player"));
-    // drop ingredient onto plate
-    } else if (item.get("componentName") != "ingredient-item" 
-      && this.get("player.item.componentName") == "ingredient-item") {
-      let success = item.addIngredient(this.get("model.player.item"));
+    } else if (item.get("componentName") != "ingredient-item" && item.get("result") == null) {
+      // drop ingredient onto plate
+      if (this.get("player.item.componentName") == "ingredient-item") {
+        let success = item.addIngredient(this.get("model.player.item"));
 
-      if (success) {
-        this.set("player.item.parent", item);
-        this.set("player.item", undefined);
+        if (success) {
+          this.set("player.item.parent", item);
+          this.set("player.item", undefined);
+        }
+      
+      //if recipe, replace ingredients with recipe
+      let possibleRecipe = this.recipesService.ingredientsToRecipe(item);
+      if (possibleRecipe && possibleRecipe.id > 0) {
+        item.setResult(possibleRecipe);
+      }
+
+      // place recipe in plate
+      } else if (item.get("componentName") == "plate-item" 
+        && this.get("player.item.componentName") == "cooking-container-item" 
+        && this.get("player.item.result") != null
+        && item.get("ingredients") == null) {
+          item.setResult(this.get("player.item.result"));
+          this.set("player.item.result", null);
       }
     }
   },
@@ -103,18 +125,8 @@ export default Component.extend({
   gameOver() {
     clearInterval(this.intervalRef);
     this.intervalRef = null;
-    // this.set("model.gameData.time", this.currentTime);
-    // this.set("model.gameIsOver", true);
-  },
-
-  containsIngredient(array, ingredient) {
-    for (let i = 0; i < array.length; i++) {
-      if (array[i].type.id == ingredient.type.id && array[i].state == ingredient.state) {
-        return true;
-      }
-    }
-
-    return false;
+    this.set("model.gameData.time", this.currentTime);
+    this.set("model.gameIsOver", true);
   },
 
   actions: {
@@ -142,31 +154,30 @@ export default Component.extend({
       return false;
     },
 
-    ingredientsToRecipe(plate) {
-      let recipe = this.get("model.recipes").objectAt(0);
-      for (let i = 1; i < this.get("model.recipes").length; i++) {
-        if (this.get("model.recipes").objectAt(i).ingredients.length != plate.ingredients.length) {
-          continue;
-        }
-
-        let matches = true;
-        let length = plate.ingredients.length;
-        for (let j = 0; j < length; j++) {
-          if (!this.containsIngredient(this.get("model.recipes").objectAt(i).ingredients, plate.ingredients[j])) {
-            matches = false;
-          }
-        }
-
-        if (matches) {
-          return this.get("model.recipes").objectAt(i);
-        }
-      }
-
-      return recipe;
-    },
+    playerHasItem() {
+      return this.get("player.item") != undefined;
+    },  
 
     submitOrder(plate) {
-      debugger;
+      if (!plate.result) {
+        return;
+      }
+      
+      for (let i = 0; i < this.get("model.activeOrders").length; i++) {
+        if (this.get("model.activeOrders").objectAt(i).recipeId == plate.result.id) {
+          let completedOrder = this.get("model.activeOrders").objectAt(i);
+          set(this.gameData, "ordersCompleted", get(this.gameData, "ordersCompleted") + 1);
+          set(this.gameData, "score", get(this.gameData, "score") + (1 - completedOrder.progress) * MAX_SCORE_PER_RECIPE[completedOrder.recipeId]);
+
+          // clean plate || TODO: dirty plate
+          this.get("model.activeOrders").removeAt(i);
+          console.log(this.get("model.activeOrders"));
+          i--;
+          set(plate, "result", null);
+          set(plate, "ingredients", null);
+          return;
+        }
+      }
     }
   }
 });

@@ -1,4 +1,3 @@
-/* eslint-disable ember/no-side-effects */
 import Item from "overcooked-pods/components/game-item/component";
 import Constants from "overcooked-pods/constants";
 import { computed } from "@ember/object";
@@ -34,7 +33,7 @@ export default Item.extend({
   style: computed("model.state", {
     get() {
       let image = this.get("model.type.image").objectAt(this.get("model.state"));
-      return htmlSafe(`background-image: url('${Constants.ImagesRootPath}${image}');`);
+      return htmlSafe(`left: ${this.get("offset")}px; bottom: ${this.get("offset")}px; background-image: url('${Constants.URI.ImagesRootPath}${image}');`);
     }
   })
 });

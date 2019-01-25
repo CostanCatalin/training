@@ -4,9 +4,14 @@ import Constants from "overcooked-pods/constants";
 export default Item.extend({
   componentName: "plate-item",
   ingredients: null,
+  result: null,
   isValidRecipe: false,
   
   addIngredient: function(ing) {
+    if (this.result != null) {
+      return false;
+    }
+    
     if (this.get("ingredients") == null) {
       this.set("ingredients", []); 
     }
@@ -16,5 +21,10 @@ export default Item.extend({
 
     this.get("ingredients").addObject(ing);
     return true;
+  },
+
+  setResult(recipe) {
+    this.set("ingredients", null);
+    this.set("result", recipe);
   }
 });

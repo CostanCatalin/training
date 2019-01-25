@@ -63,14 +63,6 @@ export default Route.extend({
       ]
     });
 
-    set(myModel.blocks[2], "item", plate1);
-    set(myModel.blocks[3], "item", plate2);
-    set(myModel.blocks[4], "item", pan);
-
-    set(plate1, "parent", myModel.blocks[2]);
-    set(plate2, "parent", myModel.blocks[3]);
-    set(pan, "parent", myModel.blocks[4]);
-
     // tables on the edges if they're not occupied
     for (let i = 0; i < myModel.width; i++) {
       if (myModel.blocks.filter(blk => {return blk.x == i && blk.y == 0;}).length == 0) {
@@ -118,6 +110,14 @@ export default Route.extend({
         );
       }
     }
+    
+    set(myModel.blocks[20], "item", plate1);
+    set(myModel.blocks[21], "item", plate2);
+    set(myModel.blocks[5], "item", pan);
+
+    set(plate1, "parent", myModel.blocks[20]);
+    set(plate2, "parent", myModel.blocks[21]);
+    set(pan, "parent", myModel.blocks[5]);
 
     return myModel;
   }

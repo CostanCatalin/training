@@ -1,7 +1,7 @@
 export default {
   BlockTypeEnum: {
     Table: "",
-    Ingredient: "box-tomato.png",
+    Ingredient: "box.png",
     CuttingBoard: "cutting-board-with-knife.png",
     FryingPan: "stove.png",
     Stove: "stove.png",
@@ -59,15 +59,22 @@ export default {
   },
   URI:{
     Root: "http://localhost:4200",
+    ImagesRootPath: "/assets/images/",
     JSON: {
       Blocks: "config/blocks.json",
       Recipes: "config/recipes.json"
     }
-  }, 
+  },
+  Position: {
+    Top: "top",
+    Bottom: "bottom",
+    Left: "left",
+    Right: "right"
+  },
   BoxSize: 75,
   ItemSize: 45,
   MaxIngredients: 4,
-  ImagesRootPath: "/assets/images/",
+  TooltipOffset: 40,
   hideClass: "hidden",
   IngredientStateChangeTime: 3000, // ms
   PlayerSpeed: 2000 // px per sec

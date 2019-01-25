@@ -38,6 +38,8 @@ export default GameBlock.extend({
     } else {
       this.set("model.item.state", this.get("model.transformsToState"));
       this.set("model.item.progress", 100);
+      this.set("model.item.result", this.recipesService.ingredientsToRecipe(this.get("model.item")));
+      this.set("model.item.ingredients", null);
       this.reqID = null;
       this.start = null;
       return;
@@ -49,8 +51,8 @@ export default GameBlock.extend({
   },
 
   actions: {
-    ingredientsToRecipe() {
-      return this.ingredientsToRecipe();
+    playerHasItem() {
+      return this.playerHasItem();
     }
   }
 });

@@ -8,7 +8,10 @@ h1 {
 }
 
 .hidden {
-  display: none;
+  visibility: hidden;
+  position: absolute;
+  top: -1000px;
+  left: -1000px;
 }
 
 .wrapper {
@@ -38,6 +41,16 @@ h1 {
   background-color: pink;
   border: 1px solid #ca943b;
   z-index: 5;
+}
+
+.ingredient-block .type {
+  width: 35px;
+  height: 35px;
+  margin: 20px;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  pointer-events: none;
 }
 
 .item {
@@ -225,7 +238,32 @@ h1 {
 }
 
 .tooltip__content {
-  background-color: pink;
-  width: 500px;
-  height: 500px;
+  background-color: wheat;
+  width: fit-content;
+  max-width: 500px;
+  min-height: 25px;
+  position: absolute;
+  z-index: 100;
+}
+
+.tooltip__text-content {
+  text-align: center;
+  padding: 3px 25px;
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.tooltip__image-content {
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+.arrow {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: wheat;
+  
+  transform: translate(-50%, -50%) rotate(45deg);
 }

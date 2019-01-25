@@ -1,5 +1,4 @@
 import Plate from "overcooked-pods/components/plate-item/component";
-import Constants from "overcooked-pods/constants";
 import { observer, computed } from "@ember/object";
 import { htmlSafe } from "@ember/string";
 
@@ -34,9 +33,9 @@ export default Plate.extend({
     }
   }),
 
-  resultStyle: computed("model.result", function() {
-    if (this.get("model.result.image")) {
-      return htmlSafe(`background-image: url('${Constants.ImagesRootPath}${this.get("model.result.image")}')`);
+  resultChanged: observer("model.result", function() {
+    if (this.get("model.result") == null) {
+      this.set("model.progress", 0);
     }
   })
 });

@@ -5,6 +5,7 @@ import Block from "overcooked-pods/components/game-block/model";
 import ActionBlock from "overcooked-pods/components/action-block/model";
 import StoveBlock from "overcooked-pods/components/stove-block/model";
 import IngredientBlock from "overcooked-pods/components/ingredient-block/model";
+import CounterBlock from "overcooked-pods/components/counter-block/model";
 
 const apiUrlPrefix = Constants.URI.Root;
 const recipesUrl = `${apiUrlPrefix}/${Constants.URI.JSON.Recipes}`;
@@ -44,12 +45,15 @@ var blocksFrom = function (data) {
         ObjectType = StoveBlock;
         break;
 
+        case Constants.BlockTypeEnum.CounterTwo:
+        ObjectType = CounterBlock;
+        break;
+
         default:
           ObjectType = ActionBlock;
     }
     res.push(ObjectType.create(data[i]));
   }
-
   return res;
 };
 

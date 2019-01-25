@@ -2,12 +2,13 @@
   {
     "id": 0,
     "name": "Random ingredients",
-    "image": "soup.svg"
+    "image": "placeholder.png"
   },
   {
     "id": 1,
     "name": "Tomato soup",
     "image": "soup.svg",
+    "cookedTogether": true, 
     "ingredients": [
       {
         "type": {
@@ -36,6 +37,7 @@
     "id": 2,
     "name": "Salad",
     "image": "salad (2).svg",
+    "cookedTogether": false, 
     "ingredients": [
       {
         "type": {
@@ -64,6 +66,7 @@
     "id": 3,
     "name": "Bacon omlette",
     "image": "bacon-omlette.png",
+    "cookedTogether": true, 
     "ingredients": [
       {
         "type": {

@@ -18,11 +18,11 @@ export default Component.extend({
     for (let i = 0; i < this.get("model.recipe.ingredients").length; i++) {
       let ingredient = this.get("model.recipe.ingredients").objectAt(i);
       let image = get(ingredient, "type.image").objectAt(get(ingredient, "state"));
-      set(ingredient, "style", htmlSafe(`background-image: url('${Constants.ImagesRootPath}${image}');`));
+      set(ingredient, "style", htmlSafe(`background-image: url('${Constants.URI.ImagesRootPath}${image}');`));
     }
     
     if (this.get("model.recipe.image")) {
-      this.set("style", htmlSafe(`background-image: url('${Constants.ImagesRootPath}${this.get("model.recipe.image")}')`));
+      this.set("style", htmlSafe(`background-image: url('${Constants.URI.ImagesRootPath}${this.get("model.recipe.image")}')`));
     }
   },
 

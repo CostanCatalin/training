@@ -1,3 +1,7 @@
-<div class="tooltip__content">
-    <p class="tooltip__text-content">{{textContent}}</p>
+<div class="tooltip__content" style={{style}}>
+    {{#if componentName}}
+    {{component componentName options=componentOptions}}
+    
+    <div class="arrow" style={{arrowStyle}}></div>
+    {{/if}}
 </div>
