@@ -23,7 +23,7 @@ export default GameBlock.extend({
     }
   }),
 
-  action: function(timestamp) {
+  action(timestamp) {
     if (!this.start) {
       this.start = timestamp;
       this.start -= this.get("model.item.stateChangeProgress") * this.get("model.item.stateChangeTimeNeeded") / 100;

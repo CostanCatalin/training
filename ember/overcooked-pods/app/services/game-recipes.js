@@ -17,6 +17,7 @@ let ingredientsMatch = function (ing1, ing2) {
       && matchedIndexes.indexOf(j) == - 1) {
         found = true;
         matchedIndexes.push(j);
+        break;
       }
     }
 

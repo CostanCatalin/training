@@ -36,9 +36,11 @@ export default GameBlock.extend({
     if (percent < 100) {
       this.set("model.item.progress", percent);
     } else {
-      this.set("model.item.state", this.get("model.transformsToState"));
+      this.set("model.item.state", this.get("model.item.transformsToState"));
       this.set("model.item.progress", 100);
-      this.set("model.item.result", this.recipesService.ingredientsToRecipe(this.get("model.item")));
+      let recipe = this.recipesService.ingredientsToRecipe(this.get("model.item"));
+      
+      this.set("model.item.result", recipe);
       this.set("model.item.ingredients", null);
       this.reqID = null;
       this.start = null;

@@ -27,8 +27,13 @@ export default Route.extend({
         plate2 = Plate.create({
           type: Constants.ItemTypeEnum.Plate
         }),
-        pan = CookingContainerItem.create({
-          type: Constants.ItemTypeEnum.BoilingPan
+        pan1 = CookingContainerItem.create({
+          type: Constants.ItemTypeEnum.BoilingPan,
+          transformsToState: Constants.IngredientStateEnum.Boiled
+        }),
+        pan2 = CookingContainerItem.create({
+          type: Constants.ItemTypeEnum.FryingPan,
+          transformsToState: Constants.IngredientStateEnum.Fried
         });
 
     let myModel = GameWrapper.create({
@@ -41,23 +46,21 @@ export default Route.extend({
         score: 0,
         ordersCompleted: 0,
         gameIsOver: false,
-        time: null
+        time: null,
+        timeLimit: 400
       },
       blocks: this.blocks.get(),
       orders: [
         Order.create({
           recipeId: 1,
-          duration: 100,
           startingAt: 0
         }),
         Order.create({
           recipeId: 2,
-          duration: 100,
           startingAt: 30
         }),
         Order.create({
           recipeId: 3,
-          duration: 100,
           startingAt: 50
         })
       ]
@@ -113,11 +116,13 @@ export default Route.extend({
     
     set(myModel.blocks[20], "item", plate1);
     set(myModel.blocks[21], "item", plate2);
-    set(myModel.blocks[5], "item", pan);
+    set(myModel.blocks[5], "item", pan1);
+    set(myModel.blocks[6], "item", pan2);
 
     set(plate1, "parent", myModel.blocks[20]);
     set(plate2, "parent", myModel.blocks[21]);
-    set(pan, "parent", myModel.blocks[5]);
+    set(pan1, "parent", myModel.blocks[5]);
+    set(pan2, "parent", myModel.blocks[6]);
 
     return myModel;
   }

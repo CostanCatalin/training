@@ -2,12 +2,11 @@
 import Component from "@ember/component";
 import Constants from "overcooked-pods/constants";
 import Utils from "overcooked-pods/utils";
+import Order from "overcooked-pods/components/game-order/model";
 import { set, get } from "@ember/object";
 import { alias } from "@ember/object/computed";
 import { inject as service } from "@ember/service";
 
-const MAX_SCORE_PER_RECIPE = [0, 150, 200, 300];
-let SecondsBetweenOrders = 15;
 
 export default Component.extend({
   currentTime: 0,
@@ -28,6 +27,13 @@ export default Component.extend({
       this.currentTime++;
       this.manageOrders();
       this.manageActiveOrders();
+      if (this.currentTime > this.gameData.timeLimit) {
+        this.gameOver();
+      }
+
+      if (this.currentTime % Constants.SecondsBetweenOrders == 0) {
+        this.addOrder();
+      }
     }.bind(this), 1000);
     
     this.gameInitialized = true;
@@ -68,11 +74,15 @@ export default Component.extend({
 
   manageActiveOrders() {
     for (let i = 0; i < this.get("model.activeOrders.length"); i++) {
-      let percent = (this.currentTime - this.model.activeOrders[i].startingAt) / this.model.activeOrders[i].duration;
+      let recipe = this.recipesService.getById(this.model.activeOrders[i].recipeId);
+
+      let percent = (this.currentTime - this.model.activeOrders[i].startingAt) / recipe.time;
       set(this.get("model.activeOrders").objectAt(i), "progress", percent);
+
       
-      if (this.currentTime >= this.model.activeOrders[i].startingAt + this.model.activeOrders[i].duration) {
-        this.gameOver();
+      if (this.currentTime >= this.model.activeOrders[i].startingAt + recipe.time) {
+        set(this.gameData, "score", this.gameData.score - recipe.maxScore / 10);
+        this.get("model.activeOrders").removeAt(i);
       }
     }
   },
@@ -98,9 +108,11 @@ export default Component.extend({
         }
       
       //if recipe, replace ingredients with recipe
-      let possibleRecipe = this.recipesService.ingredientsToRecipe(item);
-      if (possibleRecipe && possibleRecipe.id > 0) {
-        item.setResult(possibleRecipe);
+      if (item.get("componentName") == "plate-item") {
+        let possibleRecipe = this.recipesService.ingredientsToRecipe(item);
+        if (possibleRecipe && possibleRecipe.id > 0) {
+          item.setResult(possibleRecipe);
+        }
       }
 
       // place recipe in plate
@@ -127,6 +139,16 @@ export default Component.extend({
     this.intervalRef = null;
     this.set("model.gameData.time", this.currentTime);
     this.set("model.gameIsOver", true);
+  },
+
+  addOrder() {
+    let orderId = Math.round(Math.random() * (this.recipesService.getAll().length - 1));
+    let newOrder = Order.create({
+      recipeId: orderId,
+      startingAt: 51 + this.currentTime
+    });
+
+    this.get("model.orders").pushObject(newOrder);
   },
 
   actions: {
@@ -167,11 +189,10 @@ export default Component.extend({
         if (this.get("model.activeOrders").objectAt(i).recipeId == plate.result.id) {
           let completedOrder = this.get("model.activeOrders").objectAt(i);
           set(this.gameData, "ordersCompleted", get(this.gameData, "ordersCompleted") + 1);
-          set(this.gameData, "score", get(this.gameData, "score") + (1 - completedOrder.progress) * MAX_SCORE_PER_RECIPE[completedOrder.recipeId]);
+          set(this.gameData, "score", get(this.gameData, "score") + (1 - completedOrder.progress) * this.recipesService.getAll()[completedOrder.recipeId].maxScore);
 
           // clean plate || TODO: dirty plate
           this.get("model.activeOrders").removeAt(i);
-          console.log(this.get("model.activeOrders"));
           i--;
           set(plate, "result", null);
           set(plate, "ingredients", null);

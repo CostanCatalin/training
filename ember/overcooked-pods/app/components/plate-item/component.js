@@ -23,6 +23,10 @@ export default Item.extend({
           this.set("itemClass", "boiling-pan");
           break;
 
+        case 3:
+          this.set("itemClass", "frying-pan");
+          break;
+
       default:
         throw new Error("item type doesn't comply");
     }
@@ -42,6 +46,15 @@ export default Item.extend({
         rect: this.element.querySelector(".item").getBoundingClientRect()
       });
     } 
+  },
+
+  contextMenu() {
+    this.set("model.ingredients", null);
+    this.set("model.result", null);
+    if (this.get("model.progress")) {
+      this.set("model.progress", 0);
+    }
+    return false;
   },
 
   resultStyle: computed("model.result", function() {

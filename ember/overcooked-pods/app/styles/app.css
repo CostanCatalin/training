@@ -105,7 +105,8 @@ h1 {
   bottom: 7px !important;
 }
 
-.item-boiling-pan {
+.item-boiling-pan,
+.item-frying-pan {
   width: 75px;
   height: 75px;
   bottom: 0 !important;

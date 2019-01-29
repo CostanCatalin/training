@@ -8,7 +8,9 @@
     "id": 1,
     "name": "Tomato soup",
     "image": "soup.svg",
-    "cookedTogether": true, 
+    "cookedTogether": true,
+    "time": 45,
+    "maxScore": 150,
     "ingredients": [
       {
         "type": {
@@ -38,6 +40,8 @@
     "name": "Salad",
     "image": "salad (2).svg",
     "cookedTogether": false, 
+    "time": 35,
+    "maxScore": 350,
     "ingredients": [
       {
         "type": {
@@ -67,20 +71,22 @@
     "name": "Bacon omlette",
     "image": "bacon-omlette.png",
     "cookedTogether": true, 
+    "time": 40,
+    "maxScore": 250,
     "ingredients": [
       {
         "type": {
           "id": 4,
           "image": ["egg.png", null, "fried-egg.png"]
         },
-        "state": 2
+        "state": 0
       },
       {
         "type": {
           "id": 5,
           "image": ["bacon.png", "bacon-sliced.png", "bacon-sliced.png"]
         },
-        "state": 2
+        "state": 1
       }
     ]
   }

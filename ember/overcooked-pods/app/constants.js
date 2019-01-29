@@ -50,6 +50,10 @@ export default {
     BoilingPan: {
       id: 2,
       image: "boiling-pan.png"
+    },
+    FryingPan: {
+      id: 3,
+      image: "pan.png"
     }
   },
   Colours : {
@@ -77,5 +81,6 @@ export default {
   TooltipOffset: 40,
   hideClass: "hidden",
   IngredientStateChangeTime: 3000, // ms
-  PlayerSpeed: 2000 // px per sec
+  PlayerSpeed: 2000, // px per sec
+  SecondsBetweenOrders: 15 // sec
 };
