@@ -3,6 +3,7 @@ import Constants from "overcooked-pods/constants";
 import { computed } from "@ember/object";
 import { htmlSafe } from "@ember/string";
 import { inject as service } from "@ember/service";
+import Player from "overcooked-pods/components/game-player/model";
 
 export default Component.extend({
   model: null, //comes in
@@ -25,6 +26,9 @@ export default Component.extend({
   }),
 
   click: function() {
+    if (this.get("model.parent") instanceof Player) {
+      return;
+    }
     this.itemClick();
     this.tooltipManager.hideTooltip();
     return false;

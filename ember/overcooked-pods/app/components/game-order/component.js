@@ -5,24 +5,24 @@ import { htmlSafe } from "@ember/string";
 import { inject as service } from "@ember/service";
 
 export default Component.extend({
-  recipes: service("game-recipes"),
   model: null, //comes in
+  recipes: service("game-recipes"),
+  recipe: null,
   style: null,
   barStyle: null,
 
   init(...args) {
     this._super(args);
-    let recipe = this.get("recipes").getById(this.get("model.recipeId"));
-    this.set("model.recipe", recipe);
+    this.set("recipe", this.get("recipes").getById(this.get("model.recipeId")));
 
-    for (let i = 0; i < this.get("model.recipe.ingredients").length; i++) {
-      let ingredient = this.get("model.recipe.ingredients").objectAt(i);
+    for (let i = 0; i < this.get("recipe.ingredients").length; i++) {
+      let ingredient = this.get("recipe.ingredients").objectAt(i);
       let image = get(ingredient, "type.image").objectAt(get(ingredient, "state"));
       set(ingredient, "style", htmlSafe(`background-image: url('${Constants.URI.ImagesRootPath}${image}');`));
     }
     
-    if (this.get("model.recipe.image")) {
-      this.set("style", htmlSafe(`background-image: url('${Constants.URI.ImagesRootPath}${this.get("model.recipe.image")}')`));
+    if (this.get("recipe.image")) {
+      this.set("style", htmlSafe(`background-image: url('${Constants.URI.ImagesRootPath}${this.get("recipe.image")}')`));
     }
   },
 

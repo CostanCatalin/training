@@ -1,4 +1,5 @@
 import Item from "overcooked-pods/components/game-item/component";
+import Player from "overcooked-pods/components/game-player/model";
 import { alias } from "@ember/object/computed";
 import { computed } from "@ember/object";
 import { htmlSafe } from "@ember/string";
@@ -33,6 +34,9 @@ export default Item.extend({
   },
 
   mouseEnter() {
+    if (this.get("model.parent") instanceof Player) {
+      return;
+    }
     if (!this.playerHasItem()) {
       this.tooltipManager.showTooltip({
         componentName: "text-component",

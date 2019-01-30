@@ -3,6 +3,7 @@ import Component from "@ember/component";
 import Constants from "overcooked-pods/constants";
 import Utils from "overcooked-pods/utils";
 import Order from "overcooked-pods/components/game-order/model";
+import Ingredient from "overcooked-pods/components/ingredient-item/model";
 import { set, get } from "@ember/object";
 import { alias } from "@ember/object/computed";
 import { inject as service } from "@ember/service";
@@ -80,8 +81,8 @@ export default Component.extend({
       set(this.get("model.activeOrders").objectAt(i), "progress", percent);
 
       
-      if (this.currentTime >= this.model.activeOrders[i].startingAt + recipe.time) {
-        set(this.gameData, "score", this.gameData.score - recipe.maxScore / 10);
+      if (this.currentTime >= this.get("model.activeOrders").objectAt(i).startingAt + recipe.time) {
+        set(this.gameData, "score", Math.round((this.gameData.score - recipe.maxScore / 10) * 100) / 100);
         this.get("model.activeOrders").removeAt(i);
       }
     }
@@ -142,7 +143,8 @@ export default Component.extend({
   },
 
   addOrder() {
-    let orderId = Math.round(Math.random() * (this.recipesService.getAll().length - 1));
+    // random between 1 and the last
+    let orderId = Math.round(Math.random() * (this.recipesService.getAll().length - 2) + 1); 
     let newOrder = Order.create({
       recipeId: orderId,
       startingAt: 51 + this.currentTime

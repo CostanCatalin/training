@@ -4,8 +4,8 @@
   </div>
 
   <div class="image" style={{style}}></div>
-  <h3>{{model.recipe.name}}</h3>
-  {{#each model.recipe.ingredients as |ingredient|}}
+  <h3>{{recipe.name}}</h3>
+  {{#each recipe.ingredients as |ingredient|}}
     <div class="ingredient" style={{ingredient.style}}>
     </div>
   {{/each}}
