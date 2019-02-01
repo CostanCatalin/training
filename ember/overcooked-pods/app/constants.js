@@ -66,7 +66,8 @@ export default {
     ImagesRootPath: "/assets/images/",
     JSON: {
       Blocks: "config/blocks.json",
-      Recipes: "config/recipes.json"
+      Recipes: "config/recipes.json",
+      Player: "config/player.json"
     }
   },
   Position: {

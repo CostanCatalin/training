@@ -7,6 +7,10 @@ export function initialize(appInstance) {
   let blocks = appInstance.get("application.initialBlocks");
   let blocksService = appInstance.lookup("service:game-blocks");
   blocksService.initialize(blocks);
+
+  let player = appInstance.get("application.player");
+  let playerService = appInstance.lookup("service:game-player");
+  playerService.initialize(player);
 }
 
 export default {

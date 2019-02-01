@@ -35,7 +35,7 @@ export default Component.extend({
   },
 
   mouseEnter: function() {
-    if (this.model.parent.name != undefined || this.playerHasItem()) {
+    if (this.model.parent.name != undefined || this.playerHasItem && this.playerHasItem()) {
       return;
     }
     

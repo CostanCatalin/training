@@ -11,6 +11,12 @@ export default EmberObject.extend({
   items: null,
   orders: null,
   activeOrders: null,
+
+  
+  init: function(...args) {
+    this._super(args);
+    this.set("activeOrders", []);
+  },
   
   getItemById(id) {
     return this.items.find(function(elem) {

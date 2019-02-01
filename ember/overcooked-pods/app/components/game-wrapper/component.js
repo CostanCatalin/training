@@ -3,7 +3,6 @@ import Component from "@ember/component";
 import Constants from "overcooked-pods/constants";
 import Utils from "overcooked-pods/utils";
 import Order from "overcooked-pods/components/game-order/model";
-import Ingredient from "overcooked-pods/components/ingredient-item/model";
 import { set, get } from "@ember/object";
 import { alias } from "@ember/object/computed";
 import { inject as service } from "@ember/service";
@@ -11,17 +10,16 @@ import { inject as service } from "@ember/service";
 
 export default Component.extend({
   currentTime: 0,
-  gameInitialized: false,
   intervalRef: null,
   model: null, //comes in
-  player: alias("model.player"),
+  player: null,
+  playerService: service("game-player"),
   gameData: alias("model.gameData"),
   recipesService: service("game-recipes"),
-  
-  didRender() {
-    if (this.gameInitialized) {
-      return;
-    }
+
+  init(...args) {
+    this._super(args);
+    this.set("player", this.get("playerService").get());
     this.manageOrders();
     
     this.intervalRef = setInterval(function incrementTime() {
@@ -36,14 +34,9 @@ export default Component.extend({
         this.addOrder();
       }
     }.bind(this), 1000);
-    
-    this.gameInitialized = true;
   },
 
-  click(e) {
-    if (!e.target.classList.contains("wrapper")) {
-      return;
-    }
+  thisClick(e) {
     let rect = this.element.firstChild.getBoundingClientRect();
     let x = Math.floor((e.pageX - rect.left) / Constants.BoxSize);
     let y = Math.floor((e.pageY - rect.top) / Constants.BoxSize);
@@ -56,16 +49,12 @@ export default Component.extend({
 
     newX = newX < this.get("model.width") - 1 ? newX : this.get("model.width") - 2;
     newY = newY < this.get("model.height") - 1 ? newY : this.get("model.height") - 2;
-
-    this.get("player").move(newX, newY, action, params);
+    this.get("playerService").move(newX, newY, action, params);
   },
 
   manageOrders() {
     for (let i = 0; i < this.get("model.orders.length"); i++) {
       if (this.model.orders[i] && this.currentTime >= this.model.orders[i].startingAt) {
-        if (!this.model.activeOrders) {
-          this.set("model.activeOrders", []);
-        }
         this.model.activeOrders.pushObject(this.model.orders[i]);
         this.model.orders[i] = null;
         i--;
@@ -97,11 +86,11 @@ export default Component.extend({
         this.set("player.item.parent.item", undefined);
       }
 
-      this.set("player.item.parent", this.get("model.player"));
+      this.set("player.item.parent", this.get("player"));
     } else if (item.get("componentName") != "ingredient-item" && item.get("result") == null) {
       // drop ingredient onto plate
       if (this.get("player.item.componentName") == "ingredient-item") {
-        let success = item.addIngredient(this.get("model.player.item"));
+        let success = item.addIngredient(this.get("player.item"));
 
         if (success) {
           this.set("player.item.parent", item);
@@ -154,6 +143,9 @@ export default Component.extend({
   },
 
   actions: {
+    clickButton: function(e) {
+      this.thisClick(e);
+    },
     blockClick(block) {
       let dist = Utils.distance(this.get("player"), block);
 

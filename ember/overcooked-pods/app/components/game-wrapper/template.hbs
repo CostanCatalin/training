@@ -1,16 +1,15 @@
-<div class="wrapper">
+<div class="wrapper"  onclick={{action "clickButton"}}>
   {{#each model.blocks as |block|}}
       {{component block.componentName 
       model=block
-      player=model.player
+      player=player
       blockClick=(action "blockClick" block) 
       itemClick=(action "itemClick" block.item) 
       submitOrder=(action "submitOrder" block.item) 
       playerHasItem=(action "playerHasItem")}}
   {{/each}}
   
-  {{component model.player.componentName 
-  model=model.player}}
+  {{game-player model=player}}
 </div>
 
 {{end-game 

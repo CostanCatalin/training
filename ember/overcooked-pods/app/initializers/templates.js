@@ -10,6 +10,7 @@ import CounterBlock from "overcooked-pods/components/counter-block/model";
 const apiUrlPrefix = Constants.URI.Root;
 const recipesUrl = `${apiUrlPrefix}/${Constants.URI.JSON.Recipes}`;
 const blocksUrl = `${apiUrlPrefix}/${Constants.URI.JSON.Blocks}`;
+const playerUrl = `${apiUrlPrefix}/${Constants.URI.JSON.Player}`;
 
 var loadData = function(dataUrl) {
   return new Promise((resolve, reject) => {
@@ -62,10 +63,12 @@ export function initialize(application) {
 
   Promise.all([
     loadData(recipesUrl),
-    loadData(blocksUrl)
+    loadData(blocksUrl),
+    loadData(playerUrl)
   ]).then(function(responses) {
     application.set("initialRecipes", responses[0]);
     application.set("initialBlocks", blocksFrom(responses[1]));
+    application.set("player", responses[2]);
     application.advanceReadiness();
   });
 }

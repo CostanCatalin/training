@@ -3,7 +3,6 @@ import Route from "@ember/routing/route";
 import Constants from "overcooked-pods/constants";
 import Block from "overcooked-pods/components/game-block/model";
 import GameWrapper from "overcooked-pods/components/game-wrapper/model";
-import Player from "overcooked-pods/components/game-player/model";
 import Plate from "overcooked-pods/components/plate-item/model";
 import CookingContainerItem from "overcooked-pods/components/cooking-container-item/model";
 import Order from "overcooked-pods/components/game-order/model";
@@ -15,11 +14,6 @@ export default Route.extend({
   
   model() {
     let blockId = -1;
-    let playerRecord = Player.create({
-      name: "Catalin",
-      x: 2,
-      y: 2
-    });
 
     let plate1 = Plate.create({
           type: Constants.ItemTypeEnum.Plate
@@ -41,7 +35,6 @@ export default Route.extend({
       title: "Level 1",
       width: 13,
       height: 9,
-      player: playerRecord,
       gameData: {
         score: 0,
         ordersCompleted: 0,
@@ -113,7 +106,7 @@ export default Route.extend({
         );
       }
     }
-    
+    ///?????
     set(myModel.blocks[20], "item", plate1);
     set(myModel.blocks[21], "item", plate2);
     set(myModel.blocks[5], "item", pan1);

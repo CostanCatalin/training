@@ -6,6 +6,7 @@ import Ingredient from "overcooked-pods/components/ingredient-item/model";
 export default GameBlock.extend({
   reqID: null,
   start: null,
+  player: null, //comes in
   model: null, //comes in
   item: alias("model.item"),
   
@@ -47,7 +48,7 @@ export default GameBlock.extend({
   },
 
   mouseEnter: function() {
-    if (this.get("model.item") == null && this.player.item && this.player.item instanceof Ingredient) {
+    if (this.get("model.item") == null && this.get("player.item") && this.get("player.item") instanceof Ingredient) {
       this.tooltipManager.showTooltip({
         componentName: "image-component",
         componentOptions: {
