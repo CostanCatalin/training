@@ -1,0 +1,22 @@
+<html>
+<head>
+    <title>Inversare</title>
+</head>
+
+<body>    
+    <script src="../helpers.js"></script>
+    <script src="inversare.js"></script>
+    <script src="../../utils/display-helper.js"></script>
+    <script>
+        let input = [...Array(Math.floor(Math.random(1000) * 1000) + 1).keys()];
+        let displayHelper = new DisplayHelper();
+        displayHelper.display(
+            "Inverting the same array \n\nInput:",
+        input);
+        displayHelper.display(
+            "Output:",
+            inverse(input)
+        );
+    </script>
+</body>
+</html>

@@ -26,7 +26,8 @@ function commonElements(vectors) {
     return mapping;
 }
 
-function findNumberAppearances(mapping, number) {
+function findNumberAppearances(vectors, number) {
+    let mapping = commonElements(vectors);
     if (!(number in mapping)) {
         return [];
     }

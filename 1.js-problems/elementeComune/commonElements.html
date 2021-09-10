@@ -6,6 +6,7 @@
 <body>
     <script src="../helpers.js"></script>
     <script src="elementeComune.js"></script>
+    <script src="../../utils/display-helper.js"></script>
     <script>
         let vectors = [
             [1, 2, 3, 4, 5, 6],
@@ -15,7 +16,13 @@
             [1, 2]
         ];
 
-        console.log(findNumberAppearances(vectors), 2);
+        new DisplayHelper().display(
+            "Input array:",
+            vectors,
+            "\n\n\n",
+            "Output for number '2':",
+            findNumberAppearances(vectors, 2)
+        );
     </script>
 </body>
 </html>
