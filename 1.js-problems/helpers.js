@@ -18,8 +18,11 @@ function isInvalidArray(vect) {
 
 function executeWithTime(func, param, name) {
     let t0 = performance.now();
-    let result = func(param);
+    func(param);
     let t1 = performance.now();
 
-    console.log(name + " - " + (t1 - t0) + " ms");
+    const decimalPlaces = 7;
+    let value = t1 - t0;
+    let formatedDuration = Number(Math.round(parseFloat(value + 'e' + decimalPlaces)) + 'e-' + decimalPlaces).toFixed(decimalPlaces)
+    return name + " - " + formatedDuration + " ms";
 }

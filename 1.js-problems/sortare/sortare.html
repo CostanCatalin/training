@@ -1,0 +1,22 @@
+<html>
+<head>
+    <title>Running the js problems</title>
+</head>
+
+<body>
+    <script src="../helpers.js"></script>
+    <script src="../../utils/display-helper.js"></script>
+    <script src="sorting.js"></script>
+    <script>
+        let size = 1000;
+        const vectorToBeSorted = Array.from(new Array(size), (x,i) => Math.floor((Math.random() * 100000) + 1));
+        new DisplayHelper().display(
+            "Sorting an array of random integers using 3 different algorithms and measuring duration \nMeasurements differ based on input \n\nInput array:",
+            vectorToBeSorted,
+            executeWithTime(bubbleSort, vectorToBeSorted.slice(), "Bubble Sort"),
+            executeWithTime(insertionSort, vectorToBeSorted.slice(), "Insert Sort"),
+            executeWithTime(selectionSort, vectorToBeSorted.slice(), "Selection Sort")
+        );
+    </script>
+</body>
+</html>

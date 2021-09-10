@@ -8,7 +8,7 @@ let StorageManager = (function storageModule() {
         get: function() {
             let prevConfig = JSON.parse(window.localStorage.getItem(this.itemName + "_config"));
 
-            if (prevConfig.size != this.config.size || prevConfig.number != this.config.number) {
+            if (!prevConfig || prevConfig.size != this.config.size || prevConfig.number != this.config.number) {
                 return null;
             }
             return JSON.parse(window.localStorage.getItem(this.itemName));
