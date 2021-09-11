@@ -43,7 +43,6 @@ let DisplayHelper = (function helperModule() {
         }
 
         if (Array.isArray(item)) {
-            
             let arrString = "";
             if (_level === 0) {
                 arrString = "\n" + ".".repeat(_level * 3) + ` Array with ${item.length} items:`
@@ -66,6 +65,22 @@ let DisplayHelper = (function helperModule() {
                 }
             }
             return arrString;
+        } else if (typeof item === "object") {
+            let objStr = "{";
+
+            let entries = Object.entries(item);
+            for (let i = 0; i < entries.length; i++) {
+                let [key, value] = entries[i];
+                objStr += "\n" + ".".repeat((_level + 1) * 3) + key + ": " + _beautify(value, 0);
+
+                if (i < entries.length - 1) {
+                    objStr += ",";
+                } else {
+                    objStr += "\n}\n";
+                }
+            }
+
+            return objStr;
         }
 
         return item.toString();

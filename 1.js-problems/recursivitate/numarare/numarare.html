@@ -6,8 +6,16 @@
 
 <body>
     <script src="numarare.js"></script>
+    <script src="../../../utils/display-helper.js"></script>
     <script>
-        console.log(numarare([1, 2, 3, 4, 5, 5, 4, 3, 5, 5, 1, 2], 5));
+        let haystack = [1, 2, 3, 4, 5, 5, 4, 3, 5, 5, 1, 2];
+        let needle = 5;
+        new DisplayHelper().display(
+            "Recursive binary search of all occurences of a value inside an array. \nInput:",
+            {haystack: haystack, needle: needle},
+            "Output:",
+            numarare(haystack, needle)
+        );
     </script>
 </body>
 

@@ -6,8 +6,16 @@
 
 <body>
     <script src="plataSumei.js"></script>
+    <script src="../../utils/display-helper.js"></script>
     <script>
-        console.log(getOptimalBillsForPayment(107, 5));
+        let sum = 107;
+        let bill = 5;
+        new DisplayHelper().display(
+            "Number of bills to pay the sum. There are only bills that are multipliers of the value provided.\n  Input:",
+            {sum: sum, billValue: bill},
+            "Ouput:",
+            getOptimalBillsForPayment(107, 5)
+        );
     </script>
 </body>
 

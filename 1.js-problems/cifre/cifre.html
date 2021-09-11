@@ -6,8 +6,15 @@
 
 <body>
     <script src="cifre.js"></script>
+    <script src="../../utils/display-helper.js"></script>
     <script>
-        console.log(numbersSetLength(22));
+        let input = 22;
+        new DisplayHelper().display(
+            "Input:",
+            input,
+            "Output:",
+            numbersSetLength(22)
+        );
     </script>
 </body>
 

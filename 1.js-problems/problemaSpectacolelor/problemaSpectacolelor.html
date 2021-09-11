@@ -1,11 +1,12 @@
 <html>
 
 <head>
-    <title>Running the js problems</title>
+    <title>Problema Spectacolelor</title>
 </head>
 
 <body>
     <script src="problemaSpectacolelor.js"></script>
+    <script src="../../utils/display-helper.js"></script>
     <script>
         var data = [
             new Activity(
@@ -44,8 +45,12 @@
                 endM = 0
             )
         ];
-        console.log(festivalGreedy(data.slice()));
-
+        new DisplayHelper().display(
+            "Optimal schedule for n events in a festival, this solution uses a Greedy algorithm. \nInput:",
+            data,
+            "Output:",
+            festivalGreedy(data.slice())
+        );
     </script>
 </body>
 

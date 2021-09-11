@@ -6,8 +6,15 @@
 
 <body>
     <script src="sef.js"></script>
+    <script src="../../utils/display-helper.js"></script>
     <script>
-        console.log(sef(255));
+        let input = 255;
+        new DisplayHelper().display(
+            "Input:",
+            input,
+            "Output",
+            sef(input)
+        );
     </script>
 </body>
 

@@ -6,8 +6,15 @@
 
 <body>
     <script src="generareaDeSubmultimi.js"></script>
+    <script src="../../utils/display-helper.js"></script>
     <script>
-        console.log(subsets(4));
+        let input = 4;
+        new DisplayHelper().display(
+            "Compute all subsets for a given integer. \nInput:",
+            input,
+            "Output:",
+            subsets(input)
+        )
     </script>
 </body>
 

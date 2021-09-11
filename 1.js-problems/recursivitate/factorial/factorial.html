@@ -1,14 +1,19 @@
 <html>
-
 <head>
     <title>Numarare recursiva</title>
 </head>
 
 <body>
     <script src="factorial.js"></script>
+    <script src="../../../utils/display-helper.js"></script>
     <script>
-        console.log(factorial(7));
+       let input = 7;
+       new DisplayHelper().display(
+          "Compute the factorial of a number, recursively. \nInput:",
+          input,
+          "Output:",
+          factorial(input)
+       );
     </script>
 </body>
-
 </html>

@@ -6,12 +6,16 @@
 
 <body>
     <script src="cifreRomane.js"></script>
+    <script src="../../utils/display-helper.js"></script>
     <script>
-        console.log(700, cifreRomane(700));
-        console.log(125, cifreRomane(125));
-        console.log(2090, cifreRomane(2090));
-        console.log(3010, cifreRomane(3010));
-        console.log(4750, cifreRomane(4750));
+        new DisplayHelper().display(
+            "Conver arab numbers to roman numbers. Pairs of input-output:",
+            {input:700, output: cifreRomane(700)},
+            {input:125, output: cifreRomane(125)},
+            {input:2090, output: cifreRomane(2090)},
+            {input:3010, output: cifreRomane(3010)},
+            {input:4750, output: cifreRomane(4750)},
+        );
     </script>
 </body>
 

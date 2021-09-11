@@ -1,14 +1,19 @@
 <html>
 
 <head>
-    <title>Numarare recursiva</title>
+    <title>Generare recursiva</title>
 </head>
 
 <body>
     <script src="generare.js"></script>
+    <script src="../../../utils/display-helper.js"></script>
     <script>
-        console.log(generare(2));
-        console.log(generare(3));
+        new DisplayHelper().display(
+            "Generate all combinations of 1s and 0s recursively. \nInput:",
+            3,
+            "Output:",
+            generare(3)
+        );
     </script>
 </body>
 

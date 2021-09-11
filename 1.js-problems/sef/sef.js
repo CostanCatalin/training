@@ -10,5 +10,5 @@ function sef(n) {
     }
     
     let result = '1' + "0".repeat(zeroes);
-    return parseInt(result, 2);
+    return {inputBinary: binary, outputBinary: result, int: parseInt(result, 2)};
 }

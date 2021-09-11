@@ -6,9 +6,13 @@
 
 <body>
     <script src="generare.js"></script>
+    <script src="../../../utils/display-helper.js"></script>
     <script>
-        console.log(generare(3));
-        console.log(generare(4));
+       new DisplayHelper().display(
+          "Draw squares recursively. \nInput-Output pairs:",
+          { input: 3, output: "\n" + generare(3) },
+          { input: 4, output: "\n" + generare(4) },
+       );
     </script>
 </body>
 

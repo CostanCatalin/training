@@ -1,13 +1,21 @@
 <html>
 
 <head>
-    <title>Minimizarea Secventelor</title>
+    <title>Permutare Ciclica</title>
 </head>
 
 <body>
     <script src="permutareCiclica.js"></script>
+    <script src="../../utils/display-helper.js"></script>
     <script>
-        console.log(permutareCiclica([1, 2, 3, 4, 5, 6, 7], 3));
+        let input = [1, 2, 3, 4, 5, 6, 7];
+        let pos = 3;
+        new DisplayHelper().display(
+            "Shift the array by 'pos' places and add them at the end. \nInput:",
+            {array : input, position: pos},
+            "Output:",
+            permutareCiclica([1, 2, 3, 4, 5, 6, 7], 3)
+        );
     </script>
 </body>
 
